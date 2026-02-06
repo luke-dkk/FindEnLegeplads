@@ -1,11 +1,15 @@
 package app.entities;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 @Table(name ="playgrounds")
 public class Playground {
     @Id
@@ -17,10 +21,10 @@ public class Playground {
     private String name;
 
     @Column(name = "longitude")
-    private long longitude;
+    private double longitude;
 
     @Column(name = "latitude")
-    private long latitude;
+    private double latitude;
 
     @Column(name = "capacity")
     private int capacity;
