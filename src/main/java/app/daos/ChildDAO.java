@@ -1,6 +1,7 @@
 package app.daos;
 
 
+import app.entities.Child;
 import app.entities.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -9,29 +10,28 @@ import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-public class UserDAO {
+public class ChildDAO {
     private static EntityManagerFactory emf;
 
-    public UserDAO(EntityManagerFactory emf) {
+    public ChildDAO(EntityManagerFactory emf) {
         this.emf = emf;
     }
 
     @PrePersist
-    public User createUser(User u) {
-
+    public Child createChild(Child c) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            em.persist(u);
+            em.persist(c);
             em.getTransaction().commit();
         }
-        return u;
+        return c;
 
     }
 
-    public Long getUserCount() {
+    public Long getChildCount() {
         try (EntityManager em = emf.createEntityManager()) {
             // Find the number of Point objects in the database:
-            TypedQuery<Long> q1 = em.createQuery("SELECT COUNT(u) FROM User u", Long.class);
+            TypedQuery<Long> q1 = em.createQuery("SELECT COUNT(c) FROM Child c", Long.class);
             return q1.getSingleResult();
 
         }
@@ -39,11 +39,11 @@ public class UserDAO {
 
 
 
-    public List<User> getAllUsers() {
+    public List<Child> getAllChildren() {
 
         try (EntityManager em = emf.createEntityManager()) {
             // Retrieve all the Point objects from the database:
-            TypedQuery<User> query = em.createQuery("SELECT u FROM User u", User.class);
+            TypedQuery<Child> query = em.createQuery("SELECT c FROM Child c", Child.class);
             return query.getResultList();
 
 

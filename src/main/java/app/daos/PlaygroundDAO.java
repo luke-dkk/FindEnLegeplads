@@ -1,37 +1,35 @@
 package app.daos;
 
 
+import app.entities.Playground;
 import app.entities.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-public class UserDAO {
+public class PlaygroundDAO {
     private static EntityManagerFactory emf;
 
-    public UserDAO(EntityManagerFactory emf) {
+    public PlaygroundDAO(EntityManagerFactory emf) {
         this.emf = emf;
     }
 
-    @PrePersist
-    public User createUser(User u) {
-
+    public Playground createPlayground(Playground p) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            em.persist(u);
+            em.persist(p);
             em.getTransaction().commit();
         }
-        return u;
+        return p;
 
     }
 
-    public Long getUserCount() {
+    public Long getPlaygroundCount() {
         try (EntityManager em = emf.createEntityManager()) {
             // Find the number of Point objects in the database:
-            TypedQuery<Long> q1 = em.createQuery("SELECT COUNT(u) FROM User u", Long.class);
+            TypedQuery<Long> q1 = em.createQuery("SELECT COUNT(p) FROM Playground p", Long.class);
             return q1.getSingleResult();
 
         }
@@ -39,11 +37,11 @@ public class UserDAO {
 
 
 
-    public List<User> getAllUsers() {
+    public List<Playground> getAllPlaygrounds() {
 
         try (EntityManager em = emf.createEntityManager()) {
             // Retrieve all the Point objects from the database:
-            TypedQuery<User> query = em.createQuery("SELECT u FROM User u", User.class);
+            TypedQuery<Playground> query = em.createQuery("SELECT p FROM Playground p", Playground.class);
             return query.getResultList();
 
 
