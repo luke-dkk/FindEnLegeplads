@@ -1,32 +1,49 @@
 package app.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 
-
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @Entity
+@Builder
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue
-    @Column(name = "parents")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "parent_id")
     private int id;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "parent_name", nullable = false)
+    private String parentName;
 
-    @Column(name = "email")
-    private String email;
 
-    @Column(name = "password")
+    @Column(name = "email", nullable = false)
+    private String email = validateEmail();
+
+    @Column(name = "password", nullable = false)
     private String password;
 
 //    @ForeignKey
 //    private ArrayList<Child> children;
 
+public User(String email) {
+        this.email = validateEmail();
+    }
+
+
+    public String validateEmail(){
+
+        if(email == null || !email.contains("@")){
+            System.out.println("Invalid email address");
+            throw new IllegalArgumentException("Invalid email address");
+        }
+        return email;
+
+    }
 }
