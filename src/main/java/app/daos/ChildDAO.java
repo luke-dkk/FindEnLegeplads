@@ -9,28 +9,31 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
+import java.util.Set;
 
-public class ChildDAO {
+public class ChildDAO implements IDAO<Child>
+{
     private static EntityManagerFactory emf;
 
     public ChildDAO(EntityManagerFactory emf) {
         this.emf = emf;
     }
 
-    @PrePersist
-    public Child createChild(Child c) {
+
+
+    @Override
+    public Child create(Child c) {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             em.persist(c);
             em.getTransaction().commit();
+            return c;
         }
-        return c;
 
     }
 
     public Long getChildCount() {
         try (EntityManager em = emf.createEntityManager()) {
-            // Find the number of Point objects in the database:
             TypedQuery<Long> q1 = em.createQuery("SELECT COUNT(c) FROM Child c", Long.class);
             return q1.getSingleResult();
 
@@ -42,12 +45,31 @@ public class ChildDAO {
     public List<Child> getAllChildren() {
 
         try (EntityManager em = emf.createEntityManager()) {
-            // Retrieve all the Point objects from the database:
             TypedQuery<Child> query = em.createQuery("SELECT c FROM Child c", Child.class);
             return query.getResultList();
 
 
         }
+    }
+
+    @Override
+    public Child getById(int id) {
+        return null;
+    }
+
+    @Override
+    public Child update(Child child) {
+        return null;
+    }
+
+    @Override
+    public Child delete(int id) {
+        return null;
+    }
+
+    @Override
+    public Set<Child> getAll() {
+        return Set.of();
     }
 }
 

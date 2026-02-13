@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Builder
 @Table(name ="facilities")
-public class Facilities {
+public class Facility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "facilities_id")
-    private int playgroundId;
+    private int facilitiesId;
 
     private boolean toilet;
     private boolean swings;

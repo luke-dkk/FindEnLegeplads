@@ -1,22 +1,71 @@
 @startuml
-'https://plantuml.com/use-case-diagram
 
-:Main Admin: as Admin
-(Use the application) as (Use)
 
-User -> (Start)
-User --> (Use)
+class Playground {
+  playgroundId : int
+  name : String
+  longitude : double
+  latitude : double
+  capacity : int
+}
 
-Admin ---> (Use)
+class Facilities {
+  facilitiesId : int
+  toilet : boolean
+  swings : boolean
+  sandbox : boolean
+  slide : boolean
+  climbingWall : boolean
+  seesaw : boolean
+  playHouse : boolean
+  merryGoRound : boolean
+  basketballCourt : boolean
+  soccerField : boolean
+  picnicArea : boolean
+  lighting : boolean
+  benches : boolean
+  drinkingFountain : boolean
+  accessibilityFeatures : boolean
+  firstAidStation : boolean
+  dogPark : boolean
+  miscellaneous : String
+}
 
-note right of Admin : This is an example.
+class Rating {
+  id : Integer
+  rating : int
+  comment : String
+}
 
-note right of (Use)
-A note can also
-be on several lines
-end note
+class CheckIn {
+  id : int
+  checkInTime : LocalDateTime
+  checkOutTime : LocalDateTime
+}
 
-note "This note is connected\nto several objects." as N2
-(Start) .. N2
-N2 .. (Use)
+class User {
+  id : int
+  parentName : String
+  email : String
+  password : String
+}
+
+class Child {
+  childId : int
+  name : String
+  age : Integer
+  gender : String
+  sex : String
+}
+
+
+' Relationships
+
+Playground <-- CheckIn
+Playground -->  Facilities : has
+Playground -->  Rating : receives
+User <--  Rating : has
+
+User <--  Child : has
+User  --> CheckIn
 @enduml

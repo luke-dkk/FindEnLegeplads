@@ -24,7 +24,7 @@ public class User {
 
 
     @Column(name = "email", nullable = false)
-    private String email = validateEmail();
+    private String email;
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -32,18 +32,14 @@ public class User {
 //    @ForeignKey
 //    private ArrayList<Child> children;
 
-public User(String email) {
-        this.email = validateEmail();
-    }
 
-
-    public String validateEmail(){
-
-        if(email == null || !email.contains("@")){
+    @PrePersist
+    public void validateEmail() {
+        if (email == null || !email.contains("@")) {
             System.out.println("Invalid email address");
             throw new IllegalArgumentException("Invalid email address");
-        }
-        return email;
 
+
+        }
     }
 }

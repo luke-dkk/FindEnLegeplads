@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "children")
+@Table(name = "child")
 public class Child {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "child_id")
+    @Column(name = "id")
     private int childId;
 
     @Column(name = "name", length = 100, nullable = false)

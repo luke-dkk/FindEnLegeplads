@@ -1,9 +1,6 @@
 package app.config;
 
-import app.entities.Child;
-import app.entities.Facilities;
-import app.entities.Playground;
-import app.entities.User;
+import app.entities.*;
 import org.hibernate.cfg.Configuration;
 
 final class EntityRegistry {
@@ -14,7 +11,8 @@ final class EntityRegistry {
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Child.class);
         configuration.addAnnotatedClass(Playground.class);
-        configuration.addAnnotatedClass(Facilities.class);
+        configuration.addAnnotatedClass(Facility.class);
+        configuration.addAnnotatedClass(CheckIn.class);
         // TODO: Add more entities here...
     }
 }

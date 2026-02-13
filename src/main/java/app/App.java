@@ -10,9 +10,7 @@ import app.entities.Playground;
 import app.entities.User;
 //import io.javalin.Javalin;
 //import io.javalin.rendering.template.JavalinThymeleaf;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PrePersist;
 
 public class App {
     private static EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
@@ -21,20 +19,26 @@ public class App {
         PlaygroundDAO playgroundDAO = new PlaygroundDAO(emf);
         ChildDAO childDAO = new ChildDAO(emf);
         UserDAO userDAO = new UserDAO(emf);
-
         User user = User.builder().parentName("Niels").email("niels.dk").password("1234").build();
-        user.setEmail("niels");
-        userDAO.createUser(user);
+
+        userDAO.create(user);
+        System.out.println(userDAO.getAllUsers());
+        System.out.println(userDAO.getUserCount());
+
 
 
         Playground pg = Playground.builder().name("Fælledparken").capacity(1).latitude(123.3).longitude(3.14).build();
-        playgroundDAO.createPlayground(pg);
+        playgroundDAO.create(pg);
+        System.out.println( playgroundDAO.getAll());
+        System.out.println(playgroundDAO.getPlaygroundCount());
 
         Child child = Child.builder().age(1).gender("fluid").sex("boy").name("Henrik").build();
         childDAO.createChild(child);
+        System.out.println(childDAO.getChildCount());
+        System.out.println(childDAO.getAllChildren());
 
         System.out.println(childDAO.getAllChildren());
-        System.out.println(playgroundDAO.getAllPlaygrounds());
+        System.out.println(playgroundDAO.getAll());
         System.out.println(userDAO.getAllUsers());
 
 //        Javalin app = Javalin.create(config ->
