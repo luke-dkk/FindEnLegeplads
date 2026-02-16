@@ -5,41 +5,19 @@ import app.config.HibernateConfig;
 import app.daos.ChildDAO;
 import app.daos.PlaygroundDAO;
 import app.daos.UserDAO;
-import app.entities.Child;
-import app.entities.Playground;
-import app.entities.User;
+import app.entities.*;
 //import io.javalin.Javalin;
 //import io.javalin.rendering.template.JavalinThymeleaf;
+import app.utils.Populate;
 import jakarta.persistence.EntityManagerFactory;
 
 public class App {
     private static EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
 
     public static void initiate() {
-        PlaygroundDAO playgroundDAO = new PlaygroundDAO(emf);
-        ChildDAO childDAO = new ChildDAO(emf);
-        UserDAO userDAO = new UserDAO(emf);
-        User user = User.builder().parentName("Niels").email("niels.dk").password("1234").build();
+        Populate populate = new Populate();
+        populate.populateDB();
 
-        userDAO.create(user);
-        System.out.println(userDAO.getAllUsers());
-        System.out.println(userDAO.getUserCount());
-
-
-
-        Playground pg = Playground.builder().name("Fælledparken").capacity(1).latitude(123.3).longitude(3.14).build();
-        playgroundDAO.create(pg);
-        System.out.println( playgroundDAO.getAll());
-        System.out.println(playgroundDAO.getPlaygroundCount());
-
-        Child child = Child.builder().age(1).gender("fluid").sex("boy").name("Henrik").build();
-        childDAO.createChild(child);
-        System.out.println(childDAO.getChildCount());
-        System.out.println(childDAO.getAllChildren());
-
-        System.out.println(childDAO.getAllChildren());
-        System.out.println(playgroundDAO.getAll());
-        System.out.println(userDAO.getAllUsers());
 
 //        Javalin app = Javalin.create(config ->
 //        {
@@ -48,6 +26,10 @@ public class App {
 //            config.staticFiles.add("/templates");
 //        }).start(7072);
         emf.close();
+    }
+
+    private void populateDB() {
+
     }
 }
 
