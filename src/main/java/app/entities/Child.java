@@ -1,21 +1,20 @@
 package app.entities;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "user")
 @Builder
 @Entity
-@Table(name = "child")
+@Table(name ="child")
 public class Child {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int childId;
+    private Integer id;
 
     @Column(name = "name", length = 100, nullable = false)
     private String name;
@@ -23,9 +22,16 @@ public class Child {
     @Column(name = "age", nullable = true)
     private int age;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = true)
-    private String gender;
+    private Gender gender;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "sex", nullable = true)
-    private String sex;
+    private Sex sex;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id", nullable = false)
+    private User user;
+
 }

@@ -52,9 +52,23 @@ public class ChildDAO implements IDAO<Child>
         }
     }
 
+    public Child getByName(String name) {
+        try (EntityManager em = emf.createEntityManager()) {
+            TypedQuery<Child> query = em.createQuery("SELECT c FROM Child c WHERE c.name = :name", Child.class);
+            query.setParameter("name", name);
+            return query.getSingleResult();
+
+        }
+    }
     @Override
     public Child getById(int id) {
-        return null;
+        try (EntityManager em = emf.createEntityManager()) {
+            TypedQuery<Child> query = em.createQuery("SELECT c FROM Child c WHERE c.id = :id", Child.class);
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        }
+
+
     }
 
     @Override

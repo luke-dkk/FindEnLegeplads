@@ -20,7 +20,9 @@ public class UserDAO implements IDAO<User> {
         this.emf = emf;
     }
 
+    @PrePersist
     public User create(User u) {
+        u.validatePasswordAndEmail();
 
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
