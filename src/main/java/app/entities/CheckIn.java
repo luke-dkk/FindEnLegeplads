@@ -18,8 +18,8 @@ public class CheckIn {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "check_in_id")
-    private int id;
+    @Column(name = "id")
+    private Integer id;
     LocalDateTime checkIn;
     LocalDateTime checkout;
     LocalDateTime plannedCheckIn;
