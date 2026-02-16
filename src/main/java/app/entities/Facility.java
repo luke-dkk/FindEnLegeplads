@@ -1,22 +1,20 @@
 package app.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name ="facilities")
+@Table(name ="facility")
 public class Facility {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "facilities_id")
-    private int facilitiesId;
+    @Column(name = "id")
+    private Integer id;
 
     private boolean toilet;
     private boolean swings;
@@ -39,4 +37,8 @@ public class Facility {
 
 
 
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
+    private Playground playground;
 }

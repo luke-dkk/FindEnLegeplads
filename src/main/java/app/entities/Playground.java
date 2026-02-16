@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 public class Playground {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "playground_id")
-    private int playgroundId;
+    @Column(name = "id")
+    private Integer playgroundId;
 
     @Column(name = "name", length = 100)
     private String name;
@@ -28,5 +28,16 @@ public class Playground {
 
     @Column(name = "capacity")
     private int capacity;
+
+    @OneToOne(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Facility facility;
+
+    public void addFacility(Facility facility) {
+        this.facility = facility;
+        if(facility!=null) {
+            facility.setPlayground(this);
+        }
+    }
+
 
 }
