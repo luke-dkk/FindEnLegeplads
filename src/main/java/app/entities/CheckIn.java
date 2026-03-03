@@ -1,14 +1,12 @@
 package app.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -24,6 +22,13 @@ public class CheckIn {
     LocalDateTime checkout;
     LocalDateTime plannedCheckIn;
     LocalDateTime plannedCheckout;
+
+    @ManyToOne
+    private Playground playground;
+
+    @ManyToOne
+    private User user;
+
 //    Playground playground;
 //    User user;
 

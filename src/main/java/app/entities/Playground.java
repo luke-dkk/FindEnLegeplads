@@ -1,17 +1,21 @@
 package app.entities;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.engine.internal.Nullability;
 
-@Data
+import java.util.HashSet;
+import java.util.Set;
+
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Builder
 @Table(name ="playgrounds")
 public class Playground {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -32,12 +36,35 @@ public class Playground {
     @OneToOne(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true)
     private Facility facility;
 
+
+    @OneToMany(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<CheckIn> checkIns = new HashSet<>();
+
+    @OneToMany(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Rating> ratings = new HashSet<>();
+
+    private Double averageRating;
+
+
+    @Transient
+    public Double getAverageRating() {
+        if (ratings == null || ratings.isEmpty()) {
+            return 1.0;
+        }
+        return ratings.stream()
+                .mapToDouble(Rating::getRating)
+                .average()
+                .orElse(1.0);
+    }
+
+
+
     public void addFacility(Facility facility) {
         this.facility = facility;
         if(facility!=null) {
             facility.setPlayground(this);
         }
     }
-
-
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "children")
+@ToString(exclude = {"children", "ratings"})
 @Entity
 @Builder
 @Table(name = "users")
@@ -35,9 +35,12 @@ public class User {
     @Builder.Default
     private Set<Child> children = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Rating> ratings = new HashSet<>();
 
 
-
+    @PrePersist
     public void validatePasswordAndEmail() {
         validatePassword();
         validateEmail();
@@ -62,7 +65,7 @@ public class User {
 
     public void addChild(Child child) {
         if (child != null) {
-            if (children.contains(child.getName())) {
+            if (children.contains(child)) {
                 System.out.println("Child with the same name already exists");
                 throw new IllegalArgumentException("Child with the same name already exists");
             }
@@ -72,5 +75,4 @@ public class User {
             }
         }
     }
-
 }

@@ -39,6 +39,5 @@ public class Facility {
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "id")
     private Playground playground;
 }
