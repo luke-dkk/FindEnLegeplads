@@ -13,6 +13,7 @@ final class EntityRegistry {
         configuration.addAnnotatedClass(Playground.class);
         configuration.addAnnotatedClass(Facility.class);
         configuration.addAnnotatedClass(CheckIn.class);
+        configuration.addAnnotatedClass(Rating.class);
         // TODO: Add more entities here...
     }
 }
