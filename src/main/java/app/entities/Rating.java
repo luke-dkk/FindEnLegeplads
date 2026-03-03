@@ -1,12 +1,10 @@
 package app.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -15,9 +13,14 @@ import lombok.NoArgsConstructor;
 public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rating_id")
+    @Column(name = "id")
     private Integer id;
-    private int rating;
+    private double rating;
     private String comment;
+
+    @ManyToOne
     private User user;
+
+    @ManyToOne
+    private Playground playground;
 }
