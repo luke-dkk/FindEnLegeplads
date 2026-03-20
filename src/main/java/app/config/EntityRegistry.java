@@ -14,6 +14,8 @@ final class EntityRegistry {
         configuration.addAnnotatedClass(Facility.class);
         configuration.addAnnotatedClass(CheckIn.class);
         configuration.addAnnotatedClass(Rating.class);
+        configuration.addAnnotatedClass(Role.class);
+
         // TODO: Add more entities here...
     }
 }

@@ -2,6 +2,7 @@ package app.daos;
 
 
 import app.entities.Child;
+import app.entities.Role;
 import app.entities.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -20,16 +21,22 @@ public class UserDAO implements IDAO<User> {
         this.emf = emf;
     }
 
-    @PrePersist
-    public User create(User u) {
-        u.validatePasswordAndEmail();
 
-        try (EntityManager em = emf.createEntityManager()) {
+    public User create(String username, String password) {
+        try(EntityManager em = emf.createEntityManager()){
+            User user = new User(username, password);
+            Role userRole = em.find(Role.class, "user");
             em.getTransaction().begin();
-            em.persist(u);
+            if(userRole == null){
+                userRole = new Role("user");
+                em.persist(userRole);
+            }
+            user.addRole(userRole);
+            em.persist(user);
+
             em.getTransaction().commit();
+            return user;
         }
-        return u;
     }
     public Long getUserCount() {
         try (EntityManager em = emf.createEntityManager()) {

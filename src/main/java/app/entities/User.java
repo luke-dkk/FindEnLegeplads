@@ -2,6 +2,7 @@ package app.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,6 +32,9 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles = new HashSet<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Set<Child> children = new HashSet<>();
@@ -40,26 +44,37 @@ public class User {
     private Set<Rating> ratings = new HashSet<>();
 
 
-    @PrePersist
-    public void validatePasswordAndEmail() {
-        validatePassword();
-        validateEmail();
+
+    public User (String email, String password){
+        String salt = BCrypt.gensalt();
+        String hashedPassword = BCrypt.hashpw(password, salt);
+        this.email = validateEmail(email);
+        this.password = hashedPassword;
+    }
+
+    public Set<String> getRolesAsStrings() {
+        this.roles.stream().map(Role::getRoleName).toList();
+        return this.roles.stream().map(Role::getRoleName).collect(java.util.stream.Collectors.toSet());
+    }
+    public void addRole(Role role) {
+        this.roles.add(role);
     }
 
 
-    public void validatePassword() {
-        if (password == null || password.length() < 8) {
-            System.out.println("Password must be at least 8 characters long");
-            throw new IllegalArgumentException("Password must be at least 8 characters long");
+
+    public boolean validatePassword(String pw) {
+            return BCrypt.checkpw(pw, this.password);
         }
-    }
 
-    public void validateEmail() {
+
+
+    public String validateEmail(String email) {
         if (email == null || !email.contains("@")) {
             System.out.println("Invalid email address");
             throw new IllegalArgumentException("Invalid email address");
-
-
+            }
+        else{
+            return email;
         }
     }
 
