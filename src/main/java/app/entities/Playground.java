@@ -19,22 +19,25 @@ public class Playground {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer playgroundId;
+    private Integer id;
 
-    @Column(name = "name", length = 100)
+    @Column(name = "name", length = 100, nullable = false)
     private String name;
 
-    @Column(name = "longitude")
+    @Column(name = "longitude", nullable = false)
     private double longitude;
 
-    @Column(name = "latitude")
+    @Column(name = "latitude", nullable = false)
     private double latitude;
 
     @Column(name = "capacity")
-    private int capacity;
+    private Integer capacity;
 
     @OneToOne(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true)
     private Facility facility;
+
+    //    set<Integer> goodForAges x-x
+
 
 
     @OneToMany(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -49,7 +52,7 @@ public class Playground {
 
 
     @Transient
-    public Double getAverageRating() {
+    public double getAverageRating() {
         if (ratings == null || ratings.isEmpty()) {
             return 1.0;
         }
