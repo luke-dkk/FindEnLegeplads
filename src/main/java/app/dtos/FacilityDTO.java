@@ -1,22 +1,20 @@
-package app.entities;
+package app.dtos;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Builder
-@Table(name ="facility")
-public class Facility {
+public class FacilityDTO {
 
-    @Id
-    @Column(name = "id")
+    @JsonProperty("id")
     private Integer id;
-
+    @JsonProperty("toilet")
     private boolean toilet;
+    @JsonProperty("swings")
     private boolean swings;
     private boolean sandbox;
     private boolean slide;
@@ -35,9 +33,5 @@ public class Facility {
     private boolean dogPark;
     private String miscellaneous;
 
-
-
-    @OneToOne
-    @MapsId
-    private Playground playground;
+    private Integer playgroundId;
 }
