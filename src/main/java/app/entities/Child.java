@@ -20,14 +20,14 @@ public class Child {
     private String name;
 
     @Column(name = "age", nullable = true)
-    private int age;
+    private Integer age;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", nullable = true)
+    @Column(name = "gender")
     private Gender gender;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "sex", nullable = true)
+    @Column(name = "sex")
     private Sex sex;
 
     @ManyToOne

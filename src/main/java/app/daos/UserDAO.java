@@ -49,37 +49,42 @@ public class UserDAO implements IDAO<User> {
 
 
     @Override
-    public User getById(int id) {
+    public User getById(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
             return em.find(User.class, id);
         }
     }
 
     @Override
-    public User update(User user) {
+    public User update(Integer id, User updatedUser){
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-            User updatedUser = em.merge(user);
-            em.getTransaction().commit();
-            return updatedUser;
+            User user = em.find(User.class, id);
+            if (user != null) {
+                user.setParentName(updatedUser.getParentName());
+                user.setEmail(updatedUser.getEmail());
+                user.setPassword(updatedUser.getPassword());
+                em.getTransaction().commit();
+                return updatedUser;
+            }
+            em.getTransaction().rollback();
+            return null;
         }
     }
 
     @Override
-    public User delete(int id) {
-        try (EntityManager em = emf.createEntityManager()) {
+    public boolean delete(Integer id){
+        try (EntityManager em = emf.createEntityManager()){
             em.getTransaction().begin();
             User userToDelete = em.find(User.class, id);
-            if (userToDelete != null) {
+            if (userToDelete != null){
                 em.remove(userToDelete);
+                em.getTransaction().commit();
+                return true;
             }
-            em.getTransaction().commit();
-            return userToDelete;
+            em.getTransaction().rollback();
+            return false;
         }
     }
-
-
-
-
 }
 
