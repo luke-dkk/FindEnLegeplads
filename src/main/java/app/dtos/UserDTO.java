@@ -1,0 +1,27 @@
+package app.dtos;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class UserDTO {
+
+    @JsonProperty("id")
+    private Integer id;
+
+    @JsonProperty("parent_name")
+    private String parentName;
+
+    @JsonProperty("email")
+    private String email;
+
+    @JsonProperty("password")
+    private String password;
+
+}
