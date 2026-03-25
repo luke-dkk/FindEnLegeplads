@@ -2,13 +2,9 @@ package app;
 
 import app.config.ApplicationConfig;
 import app.config.HibernateConfig;
-
-import app.controllers.ChildController;
-import app.controllers.FacilityController;
-import app.controllers.PlaygroundController;
-import app.controllers.UserController;
+import app.controllers.*;
 import app.daos.PlaygroundDAO;
-import app.entities.*;
+import app.entities.Playground;
 import app.routes.*;
 import io.javalin.Javalin;
 import jakarta.persistence.EntityManagerFactory;
@@ -23,82 +19,86 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class App {
-    private static EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
+
+    private static final EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
     private static final String API_KEY = System.getenv("GOOGLE_API_KEY");
 
+    public static void initiate() {
 
-    public static void initiate() throws IOException, InterruptedException {
-//
-        EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
 
         UserController userController = new UserController(emf);
         PlaygroundController playgroundController = new PlaygroundController(emf);
         FacilityController facilityController = new FacilityController(emf);
         ChildController childController = new ChildController(emf);
+
         UserRoutes userRoutes = new UserRoutes(userController);
         PlaygroundRoutes playgroundRoutes = new PlaygroundRoutes(playgroundController);
         FacilityRoutes facilityRoutes = new FacilityRoutes(facilityController);
         ChildRoutes childRoutes = new ChildRoutes(childController);
 
-
-
         Routes routes = new Routes(userRoutes, playgroundRoutes, facilityRoutes, childRoutes);
-        ApplicationConfig applicationConfig = new ApplicationConfig(routes);
-        Javalin app = applicationConfig.startServer(7070);
 
 
-        double latitude = 55.68;
-        double longitude = 12.57;
-        int radius = 1000;
+        ApplicationConfig applicationConfig = new ApplicationConfig()
+                .route(routes.getRoutes())
+                .cors()
+                .exceptions()
+                .apiExceptions()
+                .notFound()
+                .requestLogger();
 
-        String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?"
-                + "location=" + latitude + "," + longitude
-                + "&radius=" + radius
-                + "&keyword=playground"
-                + "&key=" + API_KEY;
+        Javalin app = applicationConfig.start(7070);
 
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .GET()
-                .build();
+        // ✅ OPTIONAL: import playgrounds at startup
+        importPlaygrounds();
+    }
 
-        HttpResponse<String> response =
-                client.send(request, HttpResponse.BodyHandlers.ofString());
+    // 🔥 Move external API logic out of main
+    private static void importPlaygrounds() {
+        try {
+            double latitude = 55.68;
+            double longitude = 12.57;
+            int radius = 1000;
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode root = mapper.readTree(response.body());
+            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?"
+                    + "location=" + latitude + "," + longitude
+                    + "&radius=" + radius
+                    + "&keyword=playground"
+                    + "&key=" + API_KEY;
 
-        JsonNode results = root.get("results");
-
-        for (JsonNode place : results) {
-
-            String name = place.get("name").asText();
-
-//            JsonNode location = place
-//                    .get("geometry")
-//                    .get("location");
-//
-//            double lat = location.get("lat").asDouble();
-//            double lng = location.get("lng").asDouble();
-
-            System.out.println("Name: " + name);
-            System.out.println("Latitude: " + latitude);
-            System.out.println("Longitude: " + longitude);
-            System.out.println("----------------------------");
-            Playground playground = Playground.builder()
-                    .name(name)
-                    .latitude(latitude)
-                    .longitude(longitude)
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
                     .build();
-            PlaygroundDAO playgroundDAO = new PlaygroundDAO(emf);
-            playgroundDAO.create(playground);
-        }
-//
-//        Populate populate = new Populate(emf);
-//        populate.populate();
 
-//        }
+            HttpResponse<String> response =
+                    client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.body());
+            JsonNode results = root.get("results");
+
+            PlaygroundDAO playgroundDAO = new PlaygroundDAO(emf);
+
+            for (JsonNode place : results) {
+
+                String name = place.get("name").asText();
+
+                Playground playground = Playground.builder()
+                        .name(name)
+                        .latitude(latitude)
+                        .longitude(longitude)
+                        .build();
+
+                playgroundDAO.create(playground);
+
+                System.out.println("Saved playground: " + name);
+            }
+
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Failed to import playgrounds");
+            e.printStackTrace();
+        }
     }
 }
-

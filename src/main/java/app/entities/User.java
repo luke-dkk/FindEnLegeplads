@@ -45,11 +45,12 @@ public class User {
 
 
 
-    public User (String email, String password){
+    public User (String email, String password, String parentName){
         String salt = BCrypt.gensalt();
         String hashedPassword = BCrypt.hashpw(password, salt);
         this.email = validateEmail(email);
         this.password = hashedPassword;
+        this.parentName = parentName;
     }
 
     public Set<String> getRolesAsStrings() {

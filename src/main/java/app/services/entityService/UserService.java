@@ -25,7 +25,7 @@ public class UserService implements IService<UserDTO> {
     @Override
     public UserDTO create(UserDTO userDTO) {
         User user = userMapper.fromDTO(userDTO);
-        User createdUser = userDAO.create(user);
+        User createdUser = userDAO.create(user.getPassword(), user.getParentName(), user.getEmail());
         return userMapper.toDTO(createdUser);
     }
 
@@ -58,12 +58,17 @@ public class UserService implements IService<UserDTO> {
         return userDAO.delete(id);
     }
 
+    public boolean deleteUserFromAdmin(String email) {
+       User user = userDAO.findByEmail(email);
+       return userDAO.delete(user.getId());
+    }
+
     public List<UserDTO> createUsers(UserDTO[] userDTOs) {
         List<UserDTO> createdUsers = new ArrayList<>();
 
         for (UserDTO userDTO : userDTOs) {
             User user = userMapper.fromDTO(userDTO);
-            User createdUser = userDAO.create(user);
+            User createdUser = userDAO.create(user.getPassword(), user.getParentName(), user.getEmail());
             createdUsers.add(userMapper.toDTO(createdUser));
         }
 

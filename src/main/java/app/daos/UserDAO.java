@@ -22,9 +22,9 @@ public class UserDAO implements IDAO<User> {
     }
 
 
-    public User create(String username, String password) {
+    public User create(String username, String password, String email) {
         try(EntityManager em = emf.createEntityManager()){
-            User user = new User(username, password);
+            User user = new User(username, password, email);
             Role userRole = em.find(Role.class, "user");
             em.getTransaction().begin();
             if(userRole == null){
@@ -43,6 +43,15 @@ public class UserDAO implements IDAO<User> {
             TypedQuery<Long> q1 = em.createQuery("SELECT COUNT(u) FROM User u", Long.class);
             return q1.getSingleResult();
 
+        }
+    }
+
+    public User findByEmail(String email) {
+        try (EntityManager em = emf.createEntityManager()) {
+            TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class);
+            query.setParameter("email", email);
+            List<User> users = query.getResultList();
+            return users.isEmpty() ? null : users.get(0);
         }
     }
     @Override

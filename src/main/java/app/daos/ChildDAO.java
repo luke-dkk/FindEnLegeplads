@@ -5,8 +5,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ChildDAO implements IDAO<Child> {
