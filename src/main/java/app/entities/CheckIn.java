@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,12 +18,13 @@ public class CheckIn {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Integer id;
-    LocalDateTime checkIn;
-    LocalDateTime checkout;
-    LocalDateTime plannedCheckIn;
-    LocalDateTime plannedCheckout;
+
+    private LocalDateTime checkIn;
+    private LocalDateTime checkout;
+
+    private LocalDateTime plannedCheckIn;
+    private LocalDateTime plannedCheckout;
 
     @ManyToOne
     private Playground playground;
@@ -29,9 +32,6 @@ public class CheckIn {
     @ManyToOne
     private User user;
 
-//    Playground playground;
-//    User user;
-
-
-
+    @ManyToMany
+    private Set<Child> children = new HashSet<>();
 }

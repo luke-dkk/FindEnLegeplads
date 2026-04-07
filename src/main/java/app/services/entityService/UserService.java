@@ -6,6 +6,7 @@ import app.entities.User;
 
 import app.services.mappers.UserMapper;
 import jakarta.persistence.EntityManagerFactory;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +25,14 @@ public class UserService implements IService<UserDTO> {
 
     @Override
     public UserDTO create(UserDTO userDTO) {
+
+        String hashedPassword = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt());
+
         User user = userMapper.fromDTO(userDTO);
-        User createdUser = userDAO.create(user.getPassword(), user.getParentName(), user.getEmail());
+        user.setPassword(hashedPassword);
+
+        User createdUser = userDAO.create(user);
+
         return userMapper.toDTO(createdUser);
     }
 
@@ -67,11 +74,24 @@ public class UserService implements IService<UserDTO> {
         List<UserDTO> createdUsers = new ArrayList<>();
 
         for (UserDTO userDTO : userDTOs) {
+
+            String hashedPassword = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt());
+
             User user = userMapper.fromDTO(userDTO);
-            User createdUser = userDAO.create(user.getPassword(), user.getParentName(), user.getEmail());
+            user.setPassword(hashedPassword);
+
+            User createdUser = userDAO.create(user);
+
             createdUsers.add(userMapper.toDTO(createdUser));
         }
 
         return createdUsers;
     }
+    public User findByEmail(String email) {
+        return userDAO.findByEmail(email);
+    }
+    public void addRole(String email, String roleName) {
+        userDAO.addUserRole(email, roleName);
+    }
+
 }

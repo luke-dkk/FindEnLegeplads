@@ -33,8 +33,8 @@ public class Playground {
     @Column(name = "capacity")
     private Integer capacity;
 
-    @OneToOne(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Facility facility;
+    @OneToOne(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
+    private Facility facility = new Facility();
 
     //    set<Integer> goodForAges x-x
 
@@ -47,9 +47,6 @@ public class Playground {
     @OneToMany(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Set<Rating> ratings = new HashSet<>();
-
-    private Double averageRating;
-
 
     @Transient
     public double getAverageRating() {

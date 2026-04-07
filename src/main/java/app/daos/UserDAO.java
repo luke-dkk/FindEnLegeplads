@@ -22,19 +22,23 @@ public class UserDAO implements IDAO<User> {
     }
 
 
-    public User create(String username, String password, String email) {
+    public User create(User user) {
         try(EntityManager em = emf.createEntityManager()){
-            User user = new User(username, password, email);
-            Role userRole = em.find(Role.class, "user");
             em.getTransaction().begin();
+            if(findByEmail(user.getEmail()) != null){
+                throw new IllegalArgumentException("Email already exists: " + user.getEmail());
+            }
+            Role userRole = em.find(Role.class, "USER");
             if(userRole == null){
-                userRole = new Role("user");
+                userRole = new Role("USER");
                 em.persist(userRole);
             }
-            user.addRole(userRole);
-            em.persist(user);
 
+            user.addRole(userRole);
+
+            em.persist(user);
             em.getTransaction().commit();
+
             return user;
         }
     }
@@ -100,6 +104,28 @@ public class UserDAO implements IDAO<User> {
             }
             em.getTransaction().rollback();
             return false;
+        }
+    }
+
+    public void addUserRole(String email, String roleName) {
+        try (EntityManager em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+
+            User user = findByEmail(email);
+            if (user == null) {
+                throw new IllegalArgumentException("User with email " + email + " not found.");
+            }
+
+            Role role = em.find(Role.class, roleName);
+            if (role == null) {
+                role = new Role(roleName);
+                em.persist(role);
+            }
+
+            user.addRole(role);
+            em.merge(user);
+
+            em.getTransaction().commit();
         }
     }
 }

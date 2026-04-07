@@ -1,0 +1,2 @@
+@base = http://localhost:7070/api
+@token = YOUR_TOKEN_HERE

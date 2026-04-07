@@ -3,9 +3,14 @@ package app;
 import app.config.ApplicationConfig;
 import app.config.HibernateConfig;
 import app.controllers.*;
+import app.controllers.SecurityController;
 import app.daos.PlaygroundDAO;
+import app.dtos.UserDTO;
 import app.entities.Playground;
 import app.routes.*;
+import app.services.entityService.PlaygroundService;
+import app.services.entityService.UserService;
+import app.services.security.SecurityService;
 import io.javalin.Javalin;
 import jakarta.persistence.EntityManagerFactory;
 
@@ -24,45 +29,60 @@ public class App {
     private static final String API_KEY = System.getenv("GOOGLE_API_KEY");
 
     public static void initiate() {
+        UserService userService = new UserService(emf);
+
+        if (userService.findByEmail("admin@test.com") == null) {
+            UserDTO admin = new UserDTO();
+            admin.setEmail("admin@test.com");
+            admin.setPassword("1234");
+            admin.setParentName("Admin");
+
+            userService.create(admin);
+
+            userService.addRole("admin@test.com", "ADMIN");
+        }
 
 
-        UserController userController = new UserController(emf);
-        PlaygroundController playgroundController = new PlaygroundController(emf);
-        FacilityController facilityController = new FacilityController(emf);
+        SecurityService securityService = new SecurityService(userService);
+        SecurityController securityController = new SecurityController(securityService, userService);
+
+        UserController userController = new UserController(userService);
+        PlaygroundService playgroundService = new PlaygroundService(emf);
+        PlaygroundController playgroundController = new PlaygroundController(playgroundService, securityService);
         ChildController childController = new ChildController(emf);
+        CheckInController checkInController = new CheckInController(emf);
 
-        UserRoutes userRoutes = new UserRoutes(userController);
-        PlaygroundRoutes playgroundRoutes = new PlaygroundRoutes(playgroundController);
-        FacilityRoutes facilityRoutes = new FacilityRoutes(facilityController);
+        UserRoutes userRoutes = new UserRoutes(userController, childController);
+        PlaygroundRoutes playgroundRoutes = new PlaygroundRoutes(playgroundController, checkInController);
         ChildRoutes childRoutes = new ChildRoutes(childController);
 
-        Routes routes = new Routes(userRoutes, playgroundRoutes, facilityRoutes, childRoutes);
 
 
-        ApplicationConfig applicationConfig = new ApplicationConfig()
+        Routes routes = new Routes(userRoutes, playgroundRoutes, childRoutes, securityController, checkInController);
+        playgroundService.importPlaygrounds(55.68, 12.57, 1000);
+
+
+        ApplicationConfig applicationConfig = new ApplicationConfig(securityService)
                 .route(routes.getRoutes())
                 .cors()
+                .auth()
                 .exceptions()
                 .apiExceptions()
                 .notFound()
+                .routeOverview()
                 .requestLogger();
 
-        Javalin app = applicationConfig.start(7070);
+        Javalin app = applicationConfig.start(7075);
 
-        // ✅ OPTIONAL: import playgrounds at startup
-        importPlaygrounds();
     }
 
-    // 🔥 Move external API logic out of main
-    private static void importPlaygrounds() {
+    private static void importPlaygrounds(double latitude, double longitude, int radiusInMeters) {
         try {
-            double latitude = 55.68;
-            double longitude = 12.57;
-            int radius = 1000;
+
 
             String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?"
                     + "location=" + latitude + "," + longitude
-                    + "&radius=" + radius
+                    + "&radius=" + radiusInMeters
                     + "&keyword=playground"
                     + "&key=" + API_KEY;
 

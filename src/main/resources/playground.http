@@ -1,5 +1,42 @@
-@baseUrl = http://localhost:7070
+### Get all playgrounds
+GET http://localhost:7070/api/playgrounds
+Authorization: Bearer {{token}}
 
-###
-GET {{baseUrl}}
-###
+### Create playground
+POST http://localhost:7070/api/playgrounds
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Test Playground",
+  "latitude": 55.67,
+  "longitude": 12.56,
+  "capacity": 20
+}
+
+### Get facility
+GET http://localhost:7070/api/playgrounds/1/facility
+Authorization: Bearer {{token}}
+
+### Create facility
+POST http://localhost:7070/api/playgrounds/1/facility
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "toilet": true,
+  "swings": true,
+  "slide": true
+}
+
+### import playgrounds
+
+POST {{base}}/playgrounds/import
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "lat": 55.68,
+  "lng": 12.57,
+  "radius": 1000
+}

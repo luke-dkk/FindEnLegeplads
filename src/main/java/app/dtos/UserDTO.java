@@ -15,7 +15,7 @@ public class UserDTO {
     @JsonProperty("id")
     private Integer id;
 
-    @JsonProperty("parent_name")
+    @JsonProperty("parentName")
     private String parentName;
 
     @JsonProperty("email")

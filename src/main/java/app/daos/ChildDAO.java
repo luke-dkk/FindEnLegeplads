@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
 
+import java.util.List;
 import java.util.Set;
 
 public class ChildDAO implements IDAO<Child> {
@@ -92,6 +93,14 @@ public class ChildDAO implements IDAO<Child> {
 
             em.getTransaction().rollback();
             return false;
+        }
+    }
+    public List<Child> getByUserId(Integer userId) {
+        try (EntityManager em = emf.createEntityManager()) {
+            return em.createQuery(
+                    "SELECT c FROM Child c WHERE c.user.id = :userId",Child.class).
+                    setParameter("userId", userId)
+                    .getResultList();
         }
     }
 }

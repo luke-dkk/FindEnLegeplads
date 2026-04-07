@@ -1,10 +1,14 @@
 package app.config;
 
+import app.dtos.AuthUserDTO;
+import app.services.security.SecurityService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.EndpointGroup;
 import io.javalin.config.JavalinConfig;
+import io.javalin.http.ForbiddenResponse;
+import io.javalin.http.UnauthorizedResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +17,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ApplicationConfig {
-
+    private final SecurityService securityService;
     private final ObjectMapper jsonMapper = new ObjectMapper();
     private final Logger logger = LoggerFactory.getLogger(ApplicationConfig.class);
 
@@ -22,17 +26,16 @@ public class ApplicationConfig {
 
     private Javalin app;
 
-    public ApplicationConfig() {
+    public ApplicationConfig(SecurityService securityService) {
+        this.securityService = securityService;
         configSteps.add(this::applyBaseConfig);
     }
 
-    // ✅ Add routes
     public ApplicationConfig route(EndpointGroup route) {
         routes.add(route);
         return this;
     }
 
-    // ✅ Enable CORS
     public ApplicationConfig cors() {
         configSteps.add(config -> {
             config.bundledPlugins.enableCors(cors ->
@@ -43,7 +46,6 @@ public class ApplicationConfig {
         return this;
     }
 
-    // ✅ Handle custom API exceptions (optional)
     public ApplicationConfig apiExceptions() {
         configSteps.add(config ->
                 config.routes.exception(RuntimeException.class, (e, ctx) -> {
@@ -56,7 +58,6 @@ public class ApplicationConfig {
         return this;
     }
 
-    // ✅ Handle all other exceptions
     public ApplicationConfig exceptions() {
         configSteps.add(config ->
                 config.routes.exception(Exception.class, (e, ctx) -> {
@@ -71,7 +72,6 @@ public class ApplicationConfig {
         return this;
     }
 
-    // ✅ 404 handler
     public ApplicationConfig notFound() {
         configSteps.add(config ->
                 config.routes.error(404, ctx -> {
@@ -83,7 +83,6 @@ public class ApplicationConfig {
         return this;
     }
 
-    // ✅ Request logger (simple)
     public ApplicationConfig requestLogger() {
         configSteps.add(config ->
                 config.routes.before(ctx ->
@@ -93,7 +92,6 @@ public class ApplicationConfig {
         return this;
     }
 
-    // ✅ Start server
     public Javalin start(int port) {
         app = Javalin.create(config -> {
 
@@ -112,7 +110,6 @@ public class ApplicationConfig {
         return app;
     }
 
-    // ✅ Stop server
     public void stop() {
         if (app != null) {
             app.stop();
@@ -120,7 +117,6 @@ public class ApplicationConfig {
         }
     }
 
-    // ✅ Base config (runs first)
     private void applyBaseConfig(JavalinConfig config) {
         config.http.defaultContentType = "application/json";
         config.router.contextPath = "/api";
@@ -134,5 +130,54 @@ public class ApplicationConfig {
         config.events.serverStopped(() ->
                 System.out.println("Server stopped")
         );
+    }
+
+
+    public ApplicationConfig auth() {
+        configSteps.add(config ->
+                config.routes.before("/*", ctx -> {
+
+                    String path = ctx.path();
+
+                    if (path.startsWith("/api/auth") ||
+                            path.startsWith("/api/routes")) {
+                        return;
+                    }
+
+                    String header = ctx.header("Authorization");
+
+                    if (header == null || !header.startsWith("Bearer ")) {
+                        throw new UnauthorizedResponse("Missing token");
+                    }
+
+                    String token = header.substring(7);
+
+                    AuthUserDTO user = securityService.verifyToken(token);
+
+                    ctx.attribute("user", user);
+
+                    var allowedRoles = ctx.routeRoles()
+                            .stream()
+                            .map(role -> role.toString())
+                            .toList();
+
+                    if (!allowedRoles.isEmpty() && !allowedRoles.contains("ANYONE")) {
+
+                        boolean hasRole = user.roles().stream()
+                                .anyMatch(allowedRoles::contains);
+
+                        if (!hasRole) {
+                            throw new ForbiddenResponse("Requires ADMIN role");
+                        }
+                    }
+                })
+            );
+        return this;
+    }
+    public ApplicationConfig routeOverview() {
+        configSteps.add(config ->
+                config.bundledPlugins.enableRouteOverview("/routes")
+        );
+        return this;
     }
 }

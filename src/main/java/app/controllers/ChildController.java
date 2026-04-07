@@ -2,7 +2,9 @@ package app.controllers;
 
 import app.dtos.ChildDTO;
 import app.services.entityService.ChildService;
+import app.dtos.AuthUserDTO;
 import io.javalin.http.Context;
+import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.HttpStatus;
 import jakarta.persistence.EntityManagerFactory;
 
@@ -82,5 +84,36 @@ public class ChildController {
 
     private Integer getId(Context ctx) {
         return ctx.pathParamAsClass("id", Integer.class).get();
+    }
+
+    public void createForUser(Context ctx) {
+
+        Integer userId = ctx.pathParamAsClass("userId", Integer.class).get();
+
+        AuthUserDTO authUser = ctx.attribute("user");
+
+        if (!authUser.id().equals(userId)) {
+            throw new ForbiddenResponse("You can only create children for yourself");
+        }
+
+        ChildDTO dto = ctx.bodyAsClass(ChildDTO.class);
+
+        ChildDTO created = childService.createForUser(userId, dto);
+
+        ctx.status(201).json(created);
+    }
+
+    public void getByUser(Context ctx) {
+
+        Integer userId = ctx.pathParamAsClass("userId", Integer.class).get();
+
+        AuthUserDTO authUser = ctx.attribute("user");
+
+
+        if (!authUser.id().equals(userId)) {
+            throw new ForbiddenResponse("You can only access your own children");
+        }
+
+        ctx.json(childService.getByUserId(userId));
     }
 }

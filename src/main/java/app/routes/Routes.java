@@ -1,9 +1,7 @@
 package app.routes;
 
-import app.controllers.ChildController;
-import app.controllers.FacilityController;
-import app.controllers.PlaygroundController;
-import app.controllers.UserController;
+import app.controllers.*;
+import app.controllers.SecurityController;
 import io.javalin.apibuilder.EndpointGroup;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
@@ -13,14 +11,16 @@ public class Routes {
 
     private final UserRoutes userRoutes;
     private final PlaygroundRoutes playgroundRoutes;
-    private final FacilityRoutes facilityRoutes;
     private final ChildRoutes childRoutes;
+    private final SecurityController securityController;
+    private final CheckInController checkInController;
 
-    public Routes(UserRoutes userRoutes, PlaygroundRoutes playgroundRoutes, FacilityRoutes facilityRoutes, ChildRoutes childRoutes) {
+    public Routes(UserRoutes userRoutes, PlaygroundRoutes playgroundRoutes, ChildRoutes childRoutes, SecurityController securityController, CheckInController checkInController) {
         this.userRoutes = userRoutes;
         this.playgroundRoutes = playgroundRoutes;
-        this.facilityRoutes = facilityRoutes;
         this.childRoutes = childRoutes;
+        this.securityController = securityController;
+        this.checkInController = checkInController;
     }
 
     public EndpointGroup getRoutes() {
@@ -28,6 +28,12 @@ public class Routes {
             get("/", ctx -> ctx.result("Hello World"));
             path("/users", userRoutes.getRoutes());
             path("/playgrounds", playgroundRoutes.getRoutes());
+            put("/checkins/{id}/checkin", checkInController::checkIn);
+            put("/checkins/{id}/checkout", checkInController::checkout);
+            path("/auth", () -> {
+                post("/login", securityController::login);
+                post("/register", securityController::register);
+            });
         };
     }
 }

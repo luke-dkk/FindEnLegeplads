@@ -1,0 +1,22 @@
+### Get checkins
+GET http://localhost:7070/api/playgrounds/1/checkins
+Authorization: Bearer {{token}}
+
+### Create checkin
+POST http://localhost:7070/api/playgrounds/1/checkins
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "child_ids": [1],
+  "planned_check_in": "2026-04-07T12:00",
+  "planned_check_out": "2026-04-07T14:00"
+}
+
+### Check-in (arrival)
+PUT http://localhost:7070/api/checkins/1/checkin
+Authorization: Bearer {{token}}
+
+### Checkout
+PUT http://localhost:7070/api/checkins/1/checkout
+Authorization: Bearer {{token}}

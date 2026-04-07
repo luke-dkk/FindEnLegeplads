@@ -1,8 +1,10 @@
 package app.services.entityService;
 
 import app.daos.ChildDAO;
+import app.daos.UserDAO;
 import app.dtos.ChildDTO;
 import app.entities.Child;
+import app.entities.User;
 import app.services.mappers.ChildMapper;
 import jakarta.persistence.EntityManagerFactory;
 
@@ -14,11 +16,13 @@ public class ChildService implements IService<ChildDTO> {
     private final EntityManagerFactory emf;
     private final ChildDAO childDAO;
     private final ChildMapper childMapper;
+    private final UserDAO userDAO;
 
     public ChildService(EntityManagerFactory emf) {
         this.emf = emf;
         this.childDAO = new ChildDAO(emf);
         this.childMapper = new ChildMapper(emf);
+        this.userDAO = new UserDAO(emf);
     }
 
     @Override
@@ -26,6 +30,30 @@ public class ChildService implements IService<ChildDTO> {
         Child child = childMapper.fromDTO(childDTO);
         Child createdChild = childDAO.create(child);
         return childMapper.toDTO(createdChild);
+    }
+
+    public ChildDTO createForUser(Integer userId, ChildDTO dto) {
+
+        User user = userDAO.getById(userId);
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        Child child = childMapper.fromDTO(dto);
+
+        child.setUser(user);
+
+        Child created = childDAO.create(child);
+
+        return childMapper.toDTO(created);
+    }
+    public List<ChildDTO> getByUserId(Integer userId) {
+
+        return childDAO.getByUserId(userId)
+                .stream()
+                .map(childMapper::toDTO)
+                .toList();
     }
 
     @Override
