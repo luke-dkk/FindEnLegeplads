@@ -124,7 +124,7 @@ public class ApplicationConfig {
         config.bundledPlugins.enableDevLogging();
 
         config.events.serverStarted(() ->
-                System.out.println("Server started: http://localhost:7070/api or started on server")
+                System.out.println("Server started: http://localhost:7075/api or started on server")
         );
 
         config.events.serverStopped(() ->
@@ -135,12 +135,14 @@ public class ApplicationConfig {
 
     public ApplicationConfig auth() {
         configSteps.add(config ->
-                config.routes.before("/*", ctx -> {
+                config.routes.beforeMatched(ctx -> {
 
-                    String path = ctx.path();
+                    var allowedRoles = ctx.routeRoles()
+                            .stream()
+                            .map(role -> role.toString())
+                            .collect(java.util.stream.Collectors.toSet());
 
-                    if (path.startsWith("/api/auth") ||
-                            path.startsWith("/api/routes")) {
+                    if (allowedRoles.isEmpty() || allowedRoles.contains("ANYONE")) {
                         return;
                     }
 
@@ -151,30 +153,18 @@ public class ApplicationConfig {
                     }
 
                     String token = header.substring(7);
-
                     AuthUserDTO user = securityService.verifyToken(token);
 
+                    boolean hasRole = user.roles().stream()
+                            .anyMatch(role -> allowedRoles.contains(role));
+
+                    if (!hasRole) {
+                        throw new ForbiddenResponse("Forbidden");
+                    }
+
                     ctx.attribute("user", user);
-
-                    var allowedRoles = ctx.routeRoles()
-                            .stream()
-                            .map(role -> role.toString())
-                            .toList();
-                    if (allowedRoles.contains("ANYONE")) {
-                        return;
-                    }
-
-                    if (!allowedRoles.isEmpty() && !allowedRoles.contains("ANYONE")) {
-
-                        boolean hasRole = user.roles().stream()
-                                .anyMatch(allowedRoles::contains);
-
-                        if (!hasRole) {
-                            throw new ForbiddenResponse("Requires ADMIN role");
-                        }
-                    }
                 })
-            );
+        );
         return this;
     }
     public ApplicationConfig routeOverview() {
