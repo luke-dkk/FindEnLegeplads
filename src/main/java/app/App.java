@@ -54,11 +54,10 @@ public class App {
 
         UserRoutes userRoutes = new UserRoutes(userController, childController);
         PlaygroundRoutes playgroundRoutes = new PlaygroundRoutes(playgroundController, checkInController);
-        ChildRoutes childRoutes = new ChildRoutes(childController);
 
 
 
-        Routes routes = new Routes(userRoutes, playgroundRoutes, childRoutes, securityController, checkInController);
+        Routes routes = new Routes(userRoutes, playgroundRoutes, securityController, checkInController);
         playgroundService.importPlaygrounds(55.68, 12.57, 1000);
 
 

@@ -11,14 +11,12 @@ public class Routes {
 
     private final UserRoutes userRoutes;
     private final PlaygroundRoutes playgroundRoutes;
-    private final ChildRoutes childRoutes;
     private final SecurityController securityController;
     private final CheckInController checkInController;
 
-    public Routes(UserRoutes userRoutes, PlaygroundRoutes playgroundRoutes, ChildRoutes childRoutes, SecurityController securityController, CheckInController checkInController) {
+    public Routes(UserRoutes userRoutes, PlaygroundRoutes playgroundRoutes, SecurityController securityController, CheckInController checkInController) {
         this.userRoutes = userRoutes;
         this.playgroundRoutes = playgroundRoutes;
-        this.childRoutes = childRoutes;
         this.securityController = securityController;
         this.checkInController = checkInController;
     }
