@@ -95,12 +95,10 @@ public class ApplicationConfig {
     public Javalin start(int port) {
         app = Javalin.create(config -> {
 
-            // Apply all config steps
             for (Consumer<JavalinConfig> step : configSteps) {
                 step.accept(config);
             }
 
-            // Register routes
             for (EndpointGroup route : routes) {
                 config.routes.apiBuilder(route);
             }
@@ -133,40 +131,69 @@ public class ApplicationConfig {
     }
 
 
-    public ApplicationConfig auth() {
-        configSteps.add(config ->
-                config.routes.beforeMatched(ctx -> {
+//    public ApplicationConfig auth() {
+//        configSteps.add(config ->
+//                config.routes.beforeMatched(ctx -> {
+//
+//                    var allowedRoles = ctx.routeRoles()
+//                            .stream()
+//                            .map(role -> role.toString())
+//                            .collect(java.util.stream.Collectors.toSet());
+//
+//                    if (allowedRoles.isEmpty() || allowedRoles.contains("ANYONE")) {
+//                        return;
+//                    }
+//
+//
+//                    String header = ctx.header("Authorization");
+//
+//                    if (header == null || !header.startsWith("Bearer ")) {
+//                        throw new UnauthorizedResponse("Missing token");
+//                    }
+//
+//                    String token = header.substring(7);
+//                    AuthUserDTO user = securityService.verifyToken(token);
+//
+//                    boolean hasRole = user.roles().stream()
+//                            .anyMatch(role -> allowedRoles.contains(role));
+//
+//                    if (!hasRole) {
+//                        throw new ForbiddenResponse("Forbidden");
+//                    }
+//
+//                    ctx.attribute("user", user);
+//                })
+//        );
+//        return this;
+//    }
+public ApplicationConfig auth() {
+    configSteps.add(config ->
+            config.routes.beforeMatched(ctx -> {
 
-                    var allowedRoles = ctx.routeRoles()
-                            .stream()
-                            .map(role -> role.toString())
-                            .collect(java.util.stream.Collectors.toSet());
+                var allowedRoles = ctx.routeRoles()
+                        .stream()
+                        .map(role -> role.toString())
+                        .collect(java.util.stream.Collectors.toSet());
 
-                    if (allowedRoles.isEmpty() || allowedRoles.contains("ANYONE")) {
-                        return;
-                    }
+                if (allowedRoles.isEmpty() || allowedRoles.contains("ANYONE")) {
+                    return;
+                }
 
-                    String header = ctx.header("Authorization");
+                AuthUserDTO user = securityService.verifyTokenFromHeader(ctx);
 
-                    if (header == null || !header.startsWith("Bearer ")) {
-                        throw new UnauthorizedResponse("Missing token");
-                    }
+                ctx.attribute("user", user);
 
-                    String token = header.substring(7);
-                    AuthUserDTO user = securityService.verifyToken(token);
+                boolean hasRole = user.roles().stream()
+                        .anyMatch(role -> allowedRoles.contains(role));
 
-                    boolean hasRole = user.roles().stream()
-                            .anyMatch(role -> allowedRoles.contains(role));
+                if (!hasRole) {
+                    throw new ForbiddenResponse("Forbidden");
+                }
+            })
+    );
+    return this;
+}
 
-                    if (!hasRole) {
-                        throw new ForbiddenResponse("Forbidden");
-                    }
-
-                    ctx.attribute("user", user);
-                })
-        );
-        return this;
-    }
     public ApplicationConfig routeOverview() {
         configSteps.add(config ->
                 config.bundledPlugins.enableRouteOverview("/routes")

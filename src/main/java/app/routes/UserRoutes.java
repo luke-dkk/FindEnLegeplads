@@ -20,14 +20,14 @@ public class UserRoutes {
      public EndpointGroup getRoutes() {
         return () -> {
             get("/", userController::getAll, Role.ANYONE);
-            get("/{id}", userController::getById);
+            get("/{id}", userController::getById, Role.ADMIN);
             post("/", userController::create);
             delete("/{id}", userController::delete, Role.ADMIN);
-            put("/{id}", userController::update);
+            put("/{id}", userController::update, Role.USER);
             post("/role", userController::addRole, Role.ADMIN);
             path("/{userId}/children", () -> {
-                get(childController::getByUser);
-                post(childController::createForUser);
+                get(childController::getByUser, Role.USER);
+                post(childController::createForUser, Role.USER);
             });
 
         };

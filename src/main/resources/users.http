@@ -1,13 +1,13 @@
 ### Get all users
-GET http://localhost:7070/api/users
+GET http://localhost:7075/api/users
 Authorization: Bearer {{token}}
 
 ### Delete user (ADMIN)
-DELETE http://localhost:7070/api/users/1
+DELETE http://localhost:7075/api/users/2
 Authorization: Bearer {{token}}
 
 ### Add role
-POST http://localhost:7070/api/users/role
+POST http://localhost:7075/api/users/role
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -17,7 +17,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Add child
-POST http://localhost:7070/api/users/1/children
+POST http://localhost:7075/api/users/1/children
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

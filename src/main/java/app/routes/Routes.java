@@ -2,6 +2,7 @@ package app.routes;
 
 import app.controllers.*;
 import app.controllers.SecurityController;
+import app.services.security.Role;
 import io.javalin.apibuilder.EndpointGroup;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
@@ -26,8 +27,8 @@ public class Routes {
             get("/", ctx -> ctx.result("Hello World"));
             path("/users", userRoutes.getRoutes());
             path("/playgrounds", playgroundRoutes.getRoutes());
-            put("/checkins/{id}/checkin", checkInController::checkIn);
-            put("/checkins/{id}/checkout", checkInController::checkout);
+            put("/checkins/{id}/checkin", checkInController::checkIn, Role.USER);
+            put("/checkins/{id}/checkout", checkInController::checkout, Role.USER);
             path("/auth", () -> {
                 post("/login", securityController::login);
                 post("/register", securityController::register);

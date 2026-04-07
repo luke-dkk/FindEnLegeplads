@@ -12,8 +12,6 @@ public class ChildRoutes {
 
     public EndpointGroup getRoutes(){
         return () -> {
-            // Define child-specific routes here
-            // For example:
             // get("/", childController::getChildren);
             // get("/{id}", childController::getById);
             // post("/", childController::createChild);
