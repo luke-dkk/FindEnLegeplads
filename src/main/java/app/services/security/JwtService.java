@@ -11,6 +11,7 @@ import java.util.Set;
 public class JwtService {
 
     private final Key key = Keys.hmacShaKeyFor("12345678901234567890123456789012".getBytes());
+    //private final String issuer = System.getenv();
 
     public String generateToken(AuthUserDTO user) {
         return Jwts.builder()
@@ -20,6 +21,7 @@ public class JwtService {
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 3600000*10))
                 .signWith(key)
+                //.setIssuer(issuer)
                 .compact();
     }
 
