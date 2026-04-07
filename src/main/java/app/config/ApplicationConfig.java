@@ -160,6 +160,9 @@ public class ApplicationConfig {
                             .stream()
                             .map(role -> role.toString())
                             .toList();
+                    if (allowedRoles.contains("ANYONE")) {
+                        return;
+                    }
 
                     if (!allowedRoles.isEmpty() && !allowedRoles.contains("ANYONE")) {
 
