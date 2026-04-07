@@ -124,7 +124,7 @@ public class ApplicationConfig {
         config.bundledPlugins.enableDevLogging();
 
         config.events.serverStarted(() ->
-                System.out.println("Server started: http://localhost:7070/api")
+                System.out.println("Server started: http://localhost:7070/api or started on server")
         );
 
         config.events.serverStopped(() ->
