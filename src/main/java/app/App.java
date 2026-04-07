@@ -56,7 +56,6 @@ public class App {
         PlaygroundRoutes playgroundRoutes = new PlaygroundRoutes(playgroundController, checkInController);
 
 
-
         Routes routes = new Routes(userRoutes, playgroundRoutes, securityController, checkInController);
         playgroundService.importPlaygrounds(55.68, 12.57, 1000);
 
@@ -73,51 +72,5 @@ public class App {
 
         Javalin app = applicationConfig.start(7075);
 
-    }
-
-    private static void importPlaygrounds(double latitude, double longitude, int radiusInMeters) {
-        try {
-
-
-            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?"
-                    + "location=" + latitude + "," + longitude
-                    + "&radius=" + radiusInMeters
-                    + "&keyword=playground"
-                    + "&key=" + API_KEY;
-
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .GET()
-                    .build();
-
-            HttpResponse<String> response =
-                    client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(response.body());
-            JsonNode results = root.get("results");
-
-            PlaygroundDAO playgroundDAO = new PlaygroundDAO(emf);
-
-            for (JsonNode place : results) {
-
-                String name = place.get("name").asText();
-
-                Playground playground = Playground.builder()
-                        .name(name)
-                        .latitude(latitude)
-                        .longitude(longitude)
-                        .build();
-
-                playgroundDAO.create(playground);
-
-                System.out.println("Saved playground: " + name);
-            }
-
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Failed to import playgrounds");
-            e.printStackTrace();
-        }
     }
 }
