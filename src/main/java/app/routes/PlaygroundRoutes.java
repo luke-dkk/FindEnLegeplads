@@ -2,6 +2,7 @@ package app.routes;
 
 import app.controllers.CheckInController;
 import app.controllers.PlaygroundController;
+import app.services.security.Role;
 import io.javalin.apibuilder.EndpointGroup;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
@@ -20,7 +21,7 @@ public class PlaygroundRoutes {
     public EndpointGroup getRoutes() {
         return () -> {
 
-            get("/", playgroundController::getAll);
+            get("/", playgroundController::getAll, Role.ANYONE);
             get("/{id}", playgroundController::getById);
             post("/", playgroundController::create);
             put("/{id}", playgroundController::update);
