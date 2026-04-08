@@ -130,42 +130,6 @@ public class ApplicationConfig {
         );
     }
 
-
-//    public ApplicationConfig auth() {
-//        configSteps.add(config ->
-//                config.routes.beforeMatched(ctx -> {
-//
-//                    var allowedRoles = ctx.routeRoles()
-//                            .stream()
-//                            .map(role -> role.toString())
-//                            .collect(java.util.stream.Collectors.toSet());
-//
-//                    if (allowedRoles.isEmpty() || allowedRoles.contains("ANYONE")) {
-//                        return;
-//                    }
-//
-//
-//                    String header = ctx.header("Authorization");
-//
-//                    if (header == null || !header.startsWith("Bearer ")) {
-//                        throw new UnauthorizedResponse("Missing token");
-//                    }
-//
-//                    String token = header.substring(7);
-//                    AuthUserDTO user = securityService.verifyToken(token);
-//
-//                    boolean hasRole = user.roles().stream()
-//                            .anyMatch(role -> allowedRoles.contains(role));
-//
-//                    if (!hasRole) {
-//                        throw new ForbiddenResponse("Forbidden");
-//                    }
-//
-//                    ctx.attribute("user", user);
-//                })
-//        );
-//        return this;
-//    }
 public ApplicationConfig auth() {
     configSteps.add(config ->
             config.routes.beforeMatched(ctx -> {
