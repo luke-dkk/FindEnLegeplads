@@ -11,10 +11,10 @@ manage playground data with role-based access control.
 ## Links
 
 Portfolio website:\
-https://luke-dkk.github.io/portfolio/
+https://luke-dkk.github.io/portfolio
 
 
-Project overview video (max 5 min):\
+Project overview video (max 5 min):
 `<LINK>`{=html}
 
 Deployed application:\
@@ -37,12 +37,12 @@ This project is built as a layered backend architecture using:
 
 Technologies used:
 
--   Java\
--   Javalin\
--   JPA / Hibernate\
--   PostgreSQL\
--   Docker & Docker Compose\
--   Caddy (reverse proxy)\
+-   Java
+-   Javalin
+-   JPA / Hibernate
+-   PostgreSQL
+-   Docker & Docker Compose
+-   Caddy (reverse proxy)
 -   JWT authentication
 
 ------------------------------------------------------------------------
@@ -72,8 +72,8 @@ Example header:
 
 Authorization is handled using roles defined directly in routes:
 
--   ANYONE → public endpoints\
--   USER → authenticated users\
+-   ANYONE → public endpoints
+-   USER → authenticated users
 -   ADMIN → restricted endpoints
 
 Role validation is handled in a global middleware using
@@ -85,9 +85,9 @@ Role validation is handled in a global middleware using
 
 The application is deployed using Docker Compose with:
 
--   PostgreSQL database container\
--   Backend services\
--   Caddy reverse proxy\
+-   PostgreSQL database container
+-   Backend services
+-   Caddy reverse proxy
 -   Watchtower for automatic container updates
 
 ------------------------------------------------------------------------
@@ -98,10 +98,10 @@ The application is deployed using Docker Compose with:
 
 The system contains the following main entities:
 
--   User\
--   Role\
--   Playground\
--   Child\
+-   User
+-   Role
+-   Playground
+-   Child
 -   CheckIn
 
 
@@ -142,19 +142,19 @@ GET /api/routes
 
 ## Key Challenges
 
--   Setting up JWT authentication correctly\
--   Handling role-based authorization in Javalin\
--   Debugging Docker container communication\
+-   Setting up JWT authentication correctly
+-   Handling role-based authorization in Javalin
+-   Debugging Docker container communication
 -   Configuring reverse proxy with Caddy
 
 ------------------------------------------------------------------------
 
 ## Lessons Learned
 
--   Environment variables must match exactly between Docker and Java\
+-   Environment variables must match exactly between Docker and Java
 -   Docker volumes can prevent database initialization scripts from
-    running\
--   Reverse proxy misconfiguration can cause misleading API errors\
+    running
+-   Reverse proxy misconfiguration can cause misleading API errors
 -   Javalin route roles require `beforeMatched()` to work correctly
 
 ------------------------------------------------------------------------
@@ -163,7 +163,7 @@ GET /api/routes
 
 This project demonstrates:
 
--   REST API design\
--   Authentication and authorization\
--   Docker-based deployment\
+-   REST API design
+-   Authentication and authorization
+-   Docker-based deployment
 -   Integration with external APIs (Google Places)
