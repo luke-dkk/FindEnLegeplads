@@ -7,24 +7,26 @@ import app.dtos.AuthUserDTO;
 import io.javalin.http.Context;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 public class UserController {
 
     private final UserService userService;
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
+
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    // 🔓 Alle logged-in users
     public void getAll(Context ctx) {
         ctx.json(userService.getAll());
         ctx.status(HttpStatus.OK);
     }
 
-    // 🔓 Alle logged-in users
     public void getById(Context ctx) {
         Integer id = getId(ctx);
 
@@ -39,7 +41,6 @@ public class UserController {
         }
     }
 
-    // 🔓 (eller ADMIN hvis du vil stramme den senere)
     public void create(Context ctx) {
         UserDTO userDTO = ctx.bodyAsClass(UserDTO.class);
 
@@ -47,13 +48,14 @@ public class UserController {
 
         ctx.status(HttpStatus.CREATED);
         ctx.json(created);
+        logger.info("User created with id: {}", created.getId());
     }
 
-    // 🔐 ADMIN ONLY
     public void delete(Context ctx) {
         AuthUserDTO user = ctx.attribute("user");
 
         if (!user.roles().contains("ADMIN")) {
+            logger.debug("User with email {} attempted to delete user without ADMIN role", user.email());
             throw new ForbiddenResponse("Requires ADMIN role");
         }
 
@@ -66,17 +68,19 @@ public class UserController {
                     "message", "User deleted",
                     "id", id
             ));
+            logger.info("User with id {} deleted by admin {}", id, user.email());
         } else {
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.json(error("No user found with id", id));
+            logger.debug("Admin {} attempted to delete non-existent user with id {}", user.email(), id);
         }
     }
 
-    // 🔐 ADMIN ONLY
     public void update(Context ctx) {
         AuthUserDTO user = ctx.attribute("user");
 
         if (!user.roles().contains("ADMIN")) {
+            logger.debug("User with email {} attempted to update user without ADMIN role", user.email());
             throw new ForbiddenResponse("Requires ADMIN role");
         }
 
@@ -89,6 +93,7 @@ public class UserController {
 
             ctx.status(HttpStatus.OK);
             ctx.json(updated);
+            logger.info("User with id {} updated by admin {}", id, user.email());
         } else {
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.json(error("No user found with id", id));
@@ -110,6 +115,7 @@ public class UserController {
         AuthUserDTO currentUser = ctx.attribute("user");
 
         if (!currentUser.roles().contains("ADMIN")) {
+            logger.debug("User with email {} attempted to add role without ADMIN role", currentUser.email());
             throw new ForbiddenResponse("Requires ADMIN role");
         }
 
@@ -122,5 +128,6 @@ public class UserController {
                 "email", request.getEmail(),
                 "role", request.getRole()
         ));
+        logger.info("Role {} added to user {} by admin {}", request.getRole(), request.getEmail(), currentUser.email());
     }
 }

@@ -7,6 +7,8 @@ import app.services.security.SecurityService;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import jakarta.persistence.EntityManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -14,6 +16,8 @@ public class PlaygroundController {
 
     private final PlaygroundService playgroundService;
     private final SecurityService securityService;
+    private final Logger logger = LoggerFactory.getLogger(PlaygroundController.class);
+
 
     public PlaygroundController(PlaygroundService playgroundService, SecurityService securityService) {
 
@@ -47,6 +51,7 @@ public class PlaygroundController {
 
         ctx.json(created);
         ctx.status(HttpStatus.CREATED);
+        logger.info("Playground created with id: {}", created.getId());
     }
 
     public void createMany(Context ctx) {
@@ -65,9 +70,11 @@ public class PlaygroundController {
 
             ctx.status(HttpStatus.OK);
             ctx.json(updated);
+            logger.info("Playground updated with id: {}", id);
         } else {
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.json(error("No playground found with id", id));
+            logger.debug("Failed to update playground with id: {} - not found", id);
         }
     }
 
@@ -81,9 +88,11 @@ public class PlaygroundController {
                     "message", "Playground deleted",
                     "id", id
             ));
+            logger.info("Playground deleted with id: {}", id);
         } else {
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.json(error("No playground found with id", id));
+            logger.debug("Failed to delete playground with id: {} - not found", id);
         }
     }
 
@@ -99,6 +108,7 @@ public class PlaygroundController {
         } else {
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.json(error("No facility found for playground", playgroundId));
+            logger.debug("Failed to get facility for playground with id: {} - not found", playgroundId);
         }
     }
 
@@ -120,6 +130,7 @@ public class PlaygroundController {
 
         ctx.status(HttpStatus.OK);
         ctx.json(updated);
+        logger.info("Facility updated for playground with id: {}", playgroundId);
     }
 
     public void deleteFacility(Context ctx) {
@@ -132,10 +143,13 @@ public class PlaygroundController {
             ctx.json(Map.of(
                     "message", "Facility deleted for playground",
                     "playgroundId", playgroundId
+
             ));
+            logger.info("Facility deleted for playground with id: {}", playgroundId);
         } else {
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.json(error("No facility found for playground", playgroundId));
+            logger.debug("Failed to delete facility for playground with id: {} - not found", playgroundId);
         }
     }
     public void importPlaygrounds(Context ctx) {

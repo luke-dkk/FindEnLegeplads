@@ -6,10 +6,13 @@ import app.services.entityService.CheckInService;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import jakarta.persistence.EntityManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CheckInController {
 
     private final CheckInService checkInService;
+    private final Logger logger = LoggerFactory.getLogger(CheckInController.class);
 
     public CheckInController(EntityManagerFactory emf) {
         this.checkInService = new CheckInService(emf);

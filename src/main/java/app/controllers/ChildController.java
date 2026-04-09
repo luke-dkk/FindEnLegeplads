@@ -7,12 +7,16 @@ import io.javalin.http.Context;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.HttpStatus;
 import jakarta.persistence.EntityManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 public class ChildController {
 
     private final ChildService childService;
+    private final Logger logger = LoggerFactory.getLogger(ChildController.class);
+
 
     public ChildController(EntityManagerFactory emf) {
         this.childService = new ChildService(emf);
@@ -27,6 +31,7 @@ public class ChildController {
         ChildDTO childDTO = ctx.bodyAsClass(ChildDTO.class);
         ctx.json(childService.create(childDTO));
         ctx.status(HttpStatus.CREATED);
+        logger.info("Child created with id: " + childDTO.getId());
     }
 
     public void delete(Context ctx){
@@ -39,12 +44,15 @@ public class ChildController {
                     "message", "Child deleted",
                     "id", id
             ));
+            logger.info("Child deleted with id: " + id);
         } else {
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.json(Map.of(
                     "message", "No child found with id",
                     "id", id
+
             ));
+            logger.info("child not found with id: " + id);
         }
     }
 
@@ -57,12 +65,14 @@ public class ChildController {
             childService.update(childDTO);
             ctx.status(HttpStatus.OK);
             ctx.json(childDTO);
+            logger.info("Child updated with id: " + id);
         } else {
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.json(Map.of(
                     "message", "No child found with id",
                     "id", id
             ));
+            logger.info("child not found with id: " + id);
         }
     }
 
@@ -93,6 +103,7 @@ public class ChildController {
         AuthUserDTO authUser = ctx.attribute("user");
 
         if (!authUser.id().equals(userId)) {
+            logger.debug("User " + authUser.id() + " attempted to create a child for user " + userId);
             throw new ForbiddenResponse("You can only create children for yourself");
         }
 
@@ -101,6 +112,7 @@ public class ChildController {
         ChildDTO created = childService.createForUser(userId, dto);
 
         ctx.status(201).json(created);
+        logger.info("Child created for user " + userId + " with child id: " + created.getId());
     }
 
     public void getByUser(Context ctx) {
@@ -111,9 +123,11 @@ public class ChildController {
 
 
         if (!authUser.id().equals(userId)) {
+            logger.debug("User " + authUser.id() + " attempted to access children for user " + userId);
             throw new ForbiddenResponse("You can only access your own children");
         }
 
         ctx.json(childService.getByUserId(userId));
+        logger.info("User " + authUser.id() + " accessed children for user " + userId);
     }
 }
