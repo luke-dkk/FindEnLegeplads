@@ -4,9 +4,7 @@ import app.config.ApplicationConfig;
 import app.config.HibernateConfig;
 import app.controllers.*;
 import app.controllers.SecurityController;
-import app.daos.PlaygroundDAO;
 import app.dtos.UserDTO;
-import app.entities.Playground;
 import app.routes.*;
 import app.services.entityService.PlaygroundService;
 import app.services.entityService.UserService;
@@ -14,14 +12,6 @@ import app.services.security.SecurityService;
 import io.javalin.Javalin;
 import jakarta.persistence.EntityManagerFactory;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class App {
 

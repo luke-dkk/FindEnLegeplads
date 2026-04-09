@@ -1,12 +1,10 @@
 package app.daos;
 
 
-import app.entities.Child;
 import app.entities.Role;
 import app.entities.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.TypedQuery;
 
 import java.util.HashSet;

@@ -2,24 +2,12 @@
 GET http://localhost:7075/api/playgrounds
 Authorization: Bearer {{token}}
 
-### Create playground
-POST http://localhost:7075/api/playgrounds
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "name": "Test Playground",
-  "latitude": 55.67,
-  "longitude": 12.56,
-  "capacity": 20
-}
-
 ### Get facility
 GET http://localhost:7075/api/playgrounds/1/facility
 Authorization: Bearer {{token}}
 
-### Create facility
-POST http://localhost:7075/api/playgrounds/1/facility
+### Update facility
+PUT http://localhost:7075/api/playgrounds/1/facility
 Authorization: Bearer {{token}}
 Content-Type: application/json
 

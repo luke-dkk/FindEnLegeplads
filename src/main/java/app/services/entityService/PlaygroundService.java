@@ -25,11 +25,13 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
     private final EntityManagerFactory emf;
     private final PlaygroundDAO playgroundDAO;
     private final PlaygroundMapper playgroundMapper;
+    private final FacilityDAO facilityDAO;
 
     public PlaygroundService(EntityManagerFactory emf) {
         this.emf = emf;
         this.playgroundDAO = new PlaygroundDAO(emf);
         this.playgroundMapper = new PlaygroundMapper(emf);
+        this.facilityDAO = new FacilityDAO(emf);
     }
 
     @Override
@@ -76,9 +78,6 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
         return created;
     }
 
-    // -------------------------
-// FACILITY METHODS
-// -------------------------
 
     public FacilityDTO getFacilityByPlaygroundId(Integer playgroundId) {
         Playground playground = playgroundDAO.getById(playgroundId);
@@ -99,7 +98,6 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
 
         Facility facility = playgroundMapper.fromFacilityDTO(dto);
 
-        // vigtigt!
         playground.addFacility(facility);
 
         playgroundDAO.update(playgroundId, playground);
@@ -108,19 +106,26 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
     }
 
     public FacilityDTO updateFacility(Integer playgroundId, FacilityDTO dto) {
+
         Playground playground = playgroundDAO.getById(playgroundId);
 
         if (playground == null) {
             throw new RuntimeException("Playground not found");
         }
 
-        Facility facility = playgroundMapper.fromFacilityDTO(dto);
+        Facility existingFacility = playground.getFacility();
 
-        playground.addFacility(facility);
+        Facility updatedFacility = playgroundMapper.fromFacilityDTO(dto);
 
-        playgroundDAO.update(playgroundId, playground);
+        if (existingFacility == null) {
+            updatedFacility.setPlayground(playground);
+            facilityDAO.create(updatedFacility);
+        } else {
+            updatedFacility.setId(existingFacility.getId());
+            facilityDAO.update(existingFacility.getId(), updatedFacility);
+        }
 
-        return playgroundMapper.toFacilityDTO(facility);
+        return playgroundMapper.toFacilityDTO(updatedFacility);
     }
 
     public boolean deleteFacility(Integer playgroundId) {

@@ -34,7 +34,7 @@ public class Playground {
     private Integer capacity;
 
     @OneToOne(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
-    private Facility facility = new Facility();
+    private Facility facility;
 
     //    set<Integer> goodForAges x-x
 

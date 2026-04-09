@@ -24,7 +24,8 @@ public class Routes {
 
     public EndpointGroup getRoutes() {
         return () -> {
-            get("/", ctx -> ctx.result("Hello World"));
+            get("/", ctx -> ctx.result("Hello World"), Role.ADMIN);
+            get("/fortest", ctx -> ctx.result("Hello Forest"), Role.USER);
             path("/users", userRoutes.getRoutes());
             path("/playgrounds", playgroundRoutes.getRoutes());
             put("/checkins/{id}/checkin", checkInController::checkIn, Role.USER);

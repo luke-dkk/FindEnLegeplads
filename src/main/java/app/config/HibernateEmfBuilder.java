@@ -10,11 +10,11 @@ import java.util.Properties;
 
 // This class is just a factory that converts properties into an EntityManagerFactory
 
-final class HibernateEmfBuilder {
+public final class HibernateEmfBuilder {
 
     private HibernateEmfBuilder() {}
 
-    static EntityManagerFactory build(Properties props) {
+   public static EntityManagerFactory build(Properties props) {
         try {
             Configuration configuration = new Configuration();
             configuration.setProperties(props);

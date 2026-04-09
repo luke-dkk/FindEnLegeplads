@@ -43,10 +43,7 @@ public class ChildDAO implements IDAO<Child> {
 
     public Child getByName(String name) {
         try (EntityManager em = emf.createEntityManager()) {
-            TypedQuery<Child> query = em.createQuery(
-                    "SELECT c FROM Child c WHERE c.name = :name",
-                    Child.class
-            );
+            TypedQuery<Child> query = em.createQuery("SELECT c FROM Child c WHERE c.name = :name", Child.class);
             query.setParameter("name", name);
             return query.getSingleResult();
         }

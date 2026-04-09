@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,6 +50,7 @@ public class User {
         this.email = validateEmail(email);
         this.password = hashedPassword;
         this.parentName = parentName;
+        this.roles.add(new Role("USER"));
     }
 
     public Set<String> getRolesAsStrings() {
