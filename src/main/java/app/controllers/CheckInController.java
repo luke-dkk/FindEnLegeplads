@@ -19,43 +19,31 @@ public class CheckInController {
     }
 
     public void create(Context ctx) {
-
         AuthUserDTO user = ctx.attribute("user");
-
         Integer playgroundId = ctx.pathParamAsClass("id", Integer.class).get();
-
         CheckInDTO dto = ctx.bodyAsClass(CheckInDTO.class);
-
         dto.setPlaygroundId(playgroundId);
-
         CheckInDTO created = checkInService.create(dto, user);
-
         ctx.status(HttpStatus.CREATED).json(created);
     }
+
     public void getByPlayground(Context ctx) {
-
         Integer playgroundId = ctx.pathParamAsClass("id", Integer.class).get();
-
         ctx.json(checkInService.getByPlaygroundId(playgroundId));
     }
+
     public void checkIn(Context ctx) {
 
         Integer checkInId = ctx.pathParamAsClass("id", Integer.class).get();
-
         AuthUserDTO user = ctx.attribute("user");
-
         CheckInDTO updated = checkInService.checkIn(checkInId, user);
-
         ctx.json(updated);
     }
     public void checkout(Context ctx) {
 
         Integer checkInId = ctx.pathParamAsClass("id", Integer.class).get();
-
         AuthUserDTO user = ctx.attribute("user");
-
         CheckInDTO updated = checkInService.checkout(checkInId, user);
-
         ctx.json(updated);
     }
 }
