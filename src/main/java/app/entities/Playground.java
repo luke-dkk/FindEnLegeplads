@@ -36,10 +36,6 @@ public class Playground {
     @OneToOne(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
     private Facility facility;
 
-    //    set<Integer> goodForAges x-x
-
-
-
     @OneToMany(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Set<CheckIn> checkIns = new HashSet<>();
