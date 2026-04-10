@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class PlaygroundDAO implements IDAO<Playground> {
@@ -18,11 +19,28 @@ public class PlaygroundDAO implements IDAO<Playground> {
 
     public Playground create(Playground p) {
         try (EntityManager em = emf.createEntityManager()) {
+
+            TypedQuery<Playground> query = em.createQuery(
+                    "SELECT pl FROM Playground pl WHERE pl.name = :name AND pl.latitude = :lat AND pl.longitude = :lon",
+                    Playground.class
+            );
+
+            query.setParameter("name", p.getName());
+            query.setParameter("lat", p.getLatitude());
+            query.setParameter("lon", p.getLongitude());
+
+            List<Playground> result = query.getResultList();
+
+            if (!result.isEmpty()) {
+                return result.get(0);
+            }
+
             em.getTransaction().begin();
             em.persist(p);
             em.getTransaction().commit();
+
+            return p;
         }
-        return p;
     }
 
     public Long getPlaygroundCount() {

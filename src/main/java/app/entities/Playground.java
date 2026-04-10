@@ -12,7 +12,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name ="playgrounds")
+@Table(name ="playgrounds", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "latitude", "longitude"})
+        )
 public class Playground {
 
 
