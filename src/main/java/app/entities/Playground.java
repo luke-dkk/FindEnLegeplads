@@ -48,7 +48,7 @@ public class Playground {
     @Transient
     public double getAverageRating() {
         if (ratings == null || ratings.isEmpty()) {
-            return 1.0;
+            return 3.5;
         }
         return ratings.stream()
                 .mapToDouble(Rating::getRating)

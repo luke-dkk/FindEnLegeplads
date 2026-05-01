@@ -25,6 +25,7 @@ public class Facility {
     private boolean playHouse;
     private boolean merryGoRound;
     private boolean basketballCourt;
+    private boolean glide;
     private boolean soccerField;
     private boolean picnicArea;
     private boolean lighting;
@@ -33,6 +34,9 @@ public class Facility {
     private boolean accessibilityFeatures;
     private boolean firstAidStation;
     private boolean dogPark;
+    private boolean climbingTree;
+    private boolean pokemonGoCenter;
+    private boolean trampoline;
     private String miscellaneous;
 
 

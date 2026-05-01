@@ -6,7 +6,6 @@ import app.services.entityService.PlaygroundService;
 import app.services.security.SecurityService;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-import jakarta.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

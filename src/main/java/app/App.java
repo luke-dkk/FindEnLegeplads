@@ -3,11 +3,11 @@ package app;
 import app.config.ApplicationConfig;
 import app.config.HibernateConfig;
 import app.controllers.*;
-import app.controllers.SecurityController;
 import app.dtos.UserDTO;
 import app.routes.*;
 import app.services.entityService.PlaygroundService;
 import app.services.entityService.UserService;
+import app.services.security.SecurityController;
 import app.services.security.SecurityService;
 import io.javalin.Javalin;
 import jakarta.persistence.EntityManagerFactory;
@@ -51,8 +51,8 @@ public class App {
 
 
         ApplicationConfig applicationConfig = new ApplicationConfig(securityService)
-                .route(routes.getRoutes())
                 .cors()
+                .route(routes.getRoutes())
                 .auth()
                 .exceptions()
                 .apiExceptions()

@@ -1,8 +1,8 @@
 package app.routes;
 
 import app.controllers.*;
-import app.controllers.SecurityController;
 import app.services.security.Role;
+import app.services.security.SecurityController;
 import io.javalin.apibuilder.EndpointGroup;
 
 import static io.javalin.apibuilder.ApiBuilder.*;

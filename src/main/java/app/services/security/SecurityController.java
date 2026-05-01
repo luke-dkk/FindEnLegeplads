@@ -1,4 +1,4 @@
-package app.controllers;
+package app.services.security;
 
 import app.dtos.LoginRequest;
 import app.dtos.UserDTO;
