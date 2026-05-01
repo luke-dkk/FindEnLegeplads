@@ -148,6 +148,7 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
                     + "location=" + latitude + "," + longitude
                     + "&radius=" + radiusInMeters
                     + "&keyword=playground"
+                    + "&language=da"
                     + "&key=" + System.getenv("GOOGLE_API_KEY");
 
             HttpClient client = HttpClient.newHttpClient();
