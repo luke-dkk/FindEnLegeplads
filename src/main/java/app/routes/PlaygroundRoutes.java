@@ -22,22 +22,22 @@ public class PlaygroundRoutes {
         return () -> {
 
             get("/", playgroundController::getAll, Role.ANYONE);
-            get("/{id}", playgroundController::getById, Role.USER);
-            post("/", playgroundController::create, Role.USER);
-            put("/{id}", playgroundController::update, Role.USER);
-            delete("/{id}", playgroundController::delete, Role.ADMIN);
+            get("/{id}", playgroundController::getById, Role.ANYONE);
+            post("/", playgroundController::create, Role.ANYONE);
+            put("/{id}", playgroundController::update, Role.ANYONE);
+            delete("/{id}", playgroundController::delete, Role.ANYONE);
             post("/import", playgroundController::importPlaygrounds, Role.ADMIN);
 
             path("/{id}/facility", () -> {
                 get(playgroundController::getFacility, Role.ANYONE);
-                put(playgroundController::updateFacility, Role.USER);
-                post(playgroundController::createFacility, Role.USER);
-                delete(playgroundController::deleteFacility, Role.ADMIN);
+                put(playgroundController::updateFacility, Role.ANYONE);
+                post(playgroundController::createFacility, Role.ANYONE);
+                delete(playgroundController::deleteFacility, Role.ANYONE);
             });
 
             path("/{id}/checkins", () -> {
-                post(checkInController::create, Role.USER);
-                get(checkInController::getByPlayground, Role.USER);
+                post(checkInController::create, Role.ANYONE);
+                get(checkInController::getByPlayground, Role.ANYONE);
             });
         };
     }

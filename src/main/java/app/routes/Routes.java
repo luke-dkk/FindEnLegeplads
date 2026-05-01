@@ -24,12 +24,12 @@ public class Routes {
 
     public EndpointGroup getRoutes() {
         return () -> {
-            get("/", ctx -> ctx.result("Hello World"), Role.ADMIN);
-            get("/fortest", ctx -> ctx.result("Hello Forest"), Role.USER);
+            get("/", ctx -> ctx.result("Hello World"), Role.ANYONE);
+            get("/fortest", ctx -> ctx.result("Hello Fortest"), Role.ANYONE);
             path("/users", userRoutes.getRoutes());
             path("/playgrounds", playgroundRoutes.getRoutes());
-            put("/checkins/{id}/checkin", checkInController::checkIn, Role.USER);
-            put("/checkins/{id}/checkout", checkInController::checkout, Role.USER);
+            put("/checkins/{id}/checkin", checkInController::checkIn, Role.ANYONE);
+            put("/checkins/{id}/checkout", checkInController::checkout, Role.ANYONE);
             path("/auth", () -> {
                 post("/login", securityController::login);
                 post("/register", securityController::register);
