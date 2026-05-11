@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -27,6 +28,9 @@ public class PlaygroundDTO {
 
     @JsonProperty
     private Integer capacity;
+
+    @JsonProperty
+    private FacilityDTO facility;
 
 
 

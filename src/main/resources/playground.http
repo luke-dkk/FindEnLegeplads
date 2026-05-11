@@ -28,3 +28,16 @@ Content-Type: application/json
   "lng": 12.57,
   "radius": 1000
 }
+
+### Create playground
+POST {{base}}/playgrounds/create
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "New Playground",
+  "lat": 55.68,
+  "lng": 12.57
+}
+
+

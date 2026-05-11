@@ -54,7 +54,7 @@ public class PlaygroundDAO implements IDAO<Playground> {
     public Set<Playground> getAll() {
         try (EntityManager em = emf.createEntityManager()) {
             TypedQuery<Playground> query =
-                    em.createQuery("SELECT p FROM Playground p", Playground.class);
+                    em.createQuery("SELECT p FROM Playground p LEFT JOIN FETCH p.facility", Playground.class);
             return new HashSet<>(query.getResultList());
         }
     }

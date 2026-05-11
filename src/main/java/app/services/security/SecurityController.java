@@ -33,7 +33,7 @@ public class SecurityController {
 
         userService.create(user);
 
-        ctx.status(201).json(Map.of("msg", "User created"));
+        ctx.status(201).json(user);
     }
 
 }

@@ -21,7 +21,7 @@ public class UserRoutes {
         return () -> {
             get("/", userController::getAll, Role.ANYONE);
             get("/{id}", userController::getById, Role.ADMIN);
-            post("/", userController::create);
+            post("/register", userController::create);
             delete("/{id}", userController::delete, Role.ADMIN);
             put("/{id}", userController::update, Role.USER);
             post("/role", userController::addRole, Role.ADMIN);

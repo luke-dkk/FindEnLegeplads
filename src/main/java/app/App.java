@@ -24,7 +24,7 @@ public class App {
         if (userService.findByEmail("admin@test.com") == null) {
             UserDTO admin = new UserDTO();
             admin.setEmail("admin@test.com");
-            admin.setPassword("1234");
+            admin.setPassword("Frederik1234");
             admin.setParentName("Admin");
 
             userService.create(admin);

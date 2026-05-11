@@ -23,7 +23,7 @@ public class PlaygroundRoutes {
 
             get("/", playgroundController::getAll, Role.ANYONE);
             get("/{id}", playgroundController::getById, Role.ANYONE);
-            post("/", playgroundController::create, Role.ANYONE);
+            post("/create", playgroundController::create, Role.ANYONE);
             put("/{id}", playgroundController::update, Role.ANYONE);
             delete("/{id}", playgroundController::delete, Role.ANYONE);
             post("/import", playgroundController::importPlaygrounds, Role.ADMIN);
