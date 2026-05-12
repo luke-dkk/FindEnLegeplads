@@ -39,6 +39,9 @@ public class PlaygroundRoutes {
                 post(checkInController::create, Role.ANYONE);
                 get(checkInController::getByPlayground, Role.ANYONE);
             });
+            path("/{id}/checkout", () -> {
+                put(checkInController::checkout, Role.ANYONE);
+            });
         };
     }
 }

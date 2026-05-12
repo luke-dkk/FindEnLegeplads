@@ -21,13 +21,13 @@ public class CheckInService {
         this.mapper = new CheckInMapper(emf);
     }
 
-    public CheckInDTO create(CheckInDTO dto, AuthUserDTO authUser) {
+    public CheckInDTO create(CheckInDTO dto, Integer authUserId) {
 
         try (EntityManager em = emf.createEntityManager()) {
 
             em.getTransaction().begin();
 
-            User user = em.find(User.class, authUser.id());
+            User user = em.find(User.class, authUserId);
 
             if (user == null) {
                 throw new RuntimeException("User not found");
@@ -114,35 +114,39 @@ public class CheckInService {
             return mapper.toDTO(checkIn);
         }
     }
-    public CheckInDTO checkout(Integer checkInId, AuthUserDTO authUser) {
+    public CheckInDTO checkout(Integer checkInId, Integer authUserId) {
 
         try (EntityManager em = emf.createEntityManager()) {
 
             em.getTransaction().begin();
 
-            CheckIn checkIn = em.find(CheckIn.class, checkInId);
+            CheckIn checkout = em.find(CheckIn.class, checkInId);
 
-            if (checkIn == null) {
+            User user = em.find(User.class, authUserId);
+
+            if (checkout == null) {
                 throw new io.javalin.http.NotFoundResponse("CheckIn not found");
             }
 
-            if (!checkIn.getUser().getId().equals(authUser.id())) {
+            if (!checkout.getUser().getId().equals(authUserId)) {
                 throw new io.javalin.http.ForbiddenResponse("Not your check-in");
             }
 
-            if (checkIn.getCheckIn() == null) {
+            if (checkout.getCheckIn() == null) {
                 throw new RuntimeException("You must check in first");
             }
 
-            if (checkIn.getCheckout() != null) {
+            if (checkout.getCheckout() != null) {
                 throw new RuntimeException("Already checked out");
             }
+            checkout.setUser(user);
+            checkout.setCheckout(java.time.LocalDateTime.now());
+            em.merge(checkout);
 
-            checkIn.setCheckout(java.time.LocalDateTime.now());
 
             em.getTransaction().commit();
 
-            return mapper.toDTO(checkIn);
+            return mapper.toDTO(checkout);
         }
     }
 

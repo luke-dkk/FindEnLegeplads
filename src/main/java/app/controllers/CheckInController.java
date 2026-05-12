@@ -1,7 +1,9 @@
 package app.controllers;
 
+import app.daos.UserDAO;
 import app.dtos.CheckInDTO;
 import app.dtos.AuthUserDTO;
+import app.entities.User;
 import app.services.entityService.CheckInService;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
@@ -19,11 +21,12 @@ public class CheckInController {
     }
 
     public void create(Context ctx) {
-        AuthUserDTO user = ctx.attribute("user");
+//        AuthUserDTO user = ctx.attribute("user");
         Integer playgroundId = ctx.pathParamAsClass("id", Integer.class).get();
         CheckInDTO dto = ctx.bodyAsClass(CheckInDTO.class);
         dto.setPlaygroundId(playgroundId);
-        CheckInDTO created = checkInService.create(dto, user);
+        CheckInDTO created = checkInService.create(dto, dto.getUserId());
+
         ctx.status(HttpStatus.CREATED).json(created);
     }
 
@@ -42,8 +45,9 @@ public class CheckInController {
     public void checkout(Context ctx) {
 
         Integer checkInId = ctx.pathParamAsClass("id", Integer.class).get();
-        AuthUserDTO user = ctx.attribute("user");
-        CheckInDTO updated = checkInService.checkout(checkInId, user);
+        CheckInDTO dto = ctx.bodyAsClass(CheckInDTO.class);
+        dto.setPlaygroundId(dto.getPlaygroundId());
+        CheckInDTO updated = checkInService.checkout(checkInId, dto.getUserId());
         ctx.json(updated);
     }
 }

@@ -10,7 +10,9 @@ Content-Type: application/json
 {
   "child_ids": [1],
   "planned_check_in": "2026-04-07T12:00",
-  "planned_check_out": "2026-04-07T14:00"
+  "planned_check_out": "2026-04-07T14:00",
+  "user_id": 1
+
 }
 
 ### Check-in (arrival)
@@ -18,5 +20,22 @@ PUT http://localhost:7075/api/checkins/1/checkin
 Authorization: Bearer {{token}}
 
 ### Checkout
-PUT http://localhost:7075/api/checkins/1/checkout
+PUT http://localhost:7075/api/playgrounds/2/checkout
 Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "user_id": 1
+}
+
+###
+### Create checkin
+POST http://localhost:7075/api/playgrounds/3/checkins
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "child_ids": [1],
+  "user_id": 1
+
+}
