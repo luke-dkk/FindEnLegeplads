@@ -13,11 +13,14 @@ import jakarta.persistence.EntityManagerFactory;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class PlaygroundService implements IService<PlaygroundDTO> {
@@ -142,53 +145,148 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
         return true;
     }
 
+//    public void importPlaygrounds(double latitude, double longitude, int radiusInMeters) {
+//        try {
+//            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?"
+//                    + "location=" + latitude + "," + longitude
+//                    + "&radius=" + radiusInMeters
+//                    + "&keyword=playground"
+//                    + "&language=da"
+//                    + "&key=" + System.getenv("GOOGLE_API_KEY");
+//
+//            HttpClient client = HttpClient.newHttpClient();
+//            HttpRequest request = HttpRequest.newBuilder()
+//                    .uri(URI.create(url))
+//                    .GET()
+//                    .build();
+//
+//            HttpResponse<String> response =
+//                    client.send(request, HttpResponse.BodyHandlers.ofString());
+//
+//            ObjectMapper mapper = new ObjectMapper();
+//            JsonNode root = mapper.readTree(response.body());
+//            JsonNode results = root.get("results");
+//
+//            for (JsonNode place : results) {
+//
+//                String name = place.get("name").asText();
+//
+//                JsonNode location = place.get("geometry").get("location");
+//
+//                double lat = location.get("lat").asDouble();
+//                double lng = location.get("lng").asDouble();
+//
+//                Playground playground = Playground.builder()
+//                        .name(name)
+//                        .latitude(lat)
+//                        .longitude(lng)
+//                        .build();
+//                Facility facility = new Facility();
+//                facility.setPlayground(playground);
+//
+//                playground.setFacility(facility);
+//
+//                playgroundDAO.create(playground);
+//
+//            }
+//
+//        } catch (IOException | InterruptedException e) {
+//            throw new RuntimeException("Failed to import playgrounds", e);
+//        }
+//    }
+
     public void importPlaygrounds(double latitude, double longitude, int radiusInMeters) {
         try {
-            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?"
-                    + "location=" + latitude + "," + longitude
-                    + "&radius=" + radiusInMeters
-                    + "&keyword=playground"
-                    + "&language=da"
-                    + "&key=" + System.getenv("GOOGLE_API_KEY");
+            String overpassQuery = String.format(Locale.US, """
+        [out:json][timeout:60];
+        (
+          node["leisure"="playground"](around:%d,%.7f,%.7f);
+          way["leisure"="playground"](around:%d,%.7f,%.7f);
+          relation["leisure"="playground"](around:%d,%.7f,%.7f);
+        );
+        out center tags;
+        """,
+                    radiusInMeters, latitude, longitude,
+                    radiusInMeters, latitude, longitude,
+                    radiusInMeters, latitude, longitude
+            );
 
             HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .GET()
-                    .build();
 
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://overpass-api.de/api/interpreter"))
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(
+                            "data=" + URLEncoder.encode(overpassQuery, StandardCharsets.UTF_8)
+                    ))
+                    .build();
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
 
+            if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                throw new RuntimeException("Overpass API error: " + response.body());
+            }
+
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(response.body());
-            JsonNode results = root.get("results");
+            JsonNode elements = root.get("elements");
 
-            for (JsonNode place : results) {
+            if (elements == null || !elements.isArray()) {
+                return;
+            }
 
-                String name = place.get("name").asText();
+            for (JsonNode element : elements) {
+                double lat;
+                double lng;
 
-                JsonNode location = place.get("geometry").get("location");
+                if (element.has("lat") && element.has("lon")) {
+                    lat = element.get("lat").asDouble();
+                    lng = element.get("lon").asDouble();
+                } else if (element.has("center")) {
+                    JsonNode center = element.get("center");
+                    lat = center.get("lat").asDouble();
+                    lng = center.get("lon").asDouble();
+                } else {
+                    continue;
+                }
 
-                double lat = location.get("lat").asDouble();
-                double lng = location.get("lng").asDouble();
+                JsonNode tags = element.get("tags");
+
+                String name = null;
+
+                if (tags != null) {
+                    if (tags.has("name")) {
+                        name = tags.get("name").asText();
+                    } else if (tags.has("operator")) {
+                        name = tags.get("operator").asText() + " playground";
+                    } else if (tags.has("addr:street")) {
+                        name = "Playground at " + tags.get("addr:street").asText();
+                    }
+                }
+
+                if (name == null || name.isBlank()) {
+                    name = "Legeplads";
+                }
 
                 Playground playground = Playground.builder()
                         .name(name)
                         .latitude(lat)
                         .longitude(lng)
                         .build();
+
                 Facility facility = new Facility();
                 facility.setPlayground(playground);
 
                 playground.setFacility(facility);
 
                 playgroundDAO.create(playground);
-
             }
 
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException("Failed to import playgrounds", e);
+        }  catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Failed to import playgrounds from Overpass", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to import playgrounds from Overpass", e);
         }
     }
 }
