@@ -289,4 +289,15 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
             throw new RuntimeException("Failed to import playgrounds from Overpass", e);
         }
     }
+
+    public List<PlaygroundDTO> getPlaygroundNearClient(double lat, double lon, int radiusInMeters) {
+        if (radiusInMeters < 0) {
+            throw new IllegalArgumentException("Radius must be zero or greater");
+        }
+
+        return playgroundDAO.getPlaygroundsNearClient(lat, lon, radiusInMeters)
+                .stream()
+                .map(playgroundMapper::toDTO)
+                .toList();
+    }
 }

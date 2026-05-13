@@ -1,6 +1,7 @@
 package app.controllers;
 
 import app.dtos.FacilityDTO;
+import app.dtos.LocationDTO;
 import app.dtos.PlaygroundDTO;
 import app.services.entityService.PlaygroundService;
 import app.services.security.SecurityService;
@@ -9,6 +10,7 @@ import io.javalin.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 
 public class PlaygroundController {
@@ -175,4 +177,17 @@ public class PlaygroundController {
         );
     }
 
+    public void getPlaygroundsNearMe( Context context) {
+
+        LocationDTO location = context.bodyAsClass(LocationDTO.class);
+
+        double lat = location.getLatitude();
+        double lon = location.getLongitude();
+        int radius = location.getRadiusInMeters();
+
+       List<PlaygroundDTO> playgroundDTOList= playgroundService.getPlaygroundNearClient(lat, lon, radius);
+
+       context.json(playgroundDTOList);
+       context.status(HttpStatus.OK);
+    }
 }

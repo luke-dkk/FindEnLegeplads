@@ -29,6 +29,17 @@ Content-Type: application/json
   "radius": 1000
 }
 
+### Post playgrounds near me
+POST {{base}}/playgrounds/nearme
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "latitude": 55.68,
+  "longitude": 12.57,
+  "radiusInMeters": 1000
+}
+
 ### Create playground
 POST {{base}}/playgrounds/create
 Authorization: Bearer {{token}}
@@ -39,5 +50,4 @@ Content-Type: application/json
   "lat": 55.68,
   "lng": 12.57
 }
-
 

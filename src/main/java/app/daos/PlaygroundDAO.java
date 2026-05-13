@@ -59,6 +59,48 @@ public class PlaygroundDAO implements IDAO<Playground> {
         }
     }
 
+    public List<Playground> getPlaygroundsNearClient(double lat, double lon, int radiusInMeters) {
+        double earthRadiusInMeters = 6371000.0;
+        double radiusInDegrees = Math.toDegrees(radiusInMeters / earthRadiusInMeters);
+        double latitudeRadians = Math.toRadians(lat);
+        double longitudeRadiusInDegrees = Math.abs(Math.cos(latitudeRadians)) < 0.000001
+                ? 180.0
+                : radiusInDegrees / Math.cos(latitudeRadians);
+
+        String distanceExpression = """
+                (2.0 * :earthRadius * asin(sqrt(
+                    power(sin(radians(p.latitude - :lat) / 2.0), 2.0)
+                    + cos(radians(:lat))
+                    * cos(radians(p.latitude))
+                    * power(sin(radians(p.longitude - :lon) / 2.0), 2.0)
+                )))
+                """;
+
+        String jpql = """
+                SELECT p
+                FROM Playground p
+                LEFT JOIN FETCH p.facility
+                WHERE p.latitude BETWEEN :minLat AND :maxLat
+                  AND p.longitude BETWEEN :minLon AND :maxLon
+                  AND %s <= :radius
+                ORDER BY %s
+                """.formatted(distanceExpression, distanceExpression);
+
+        try (EntityManager em = emf.createEntityManager()) {
+            TypedQuery<Playground> query = em.createQuery(jpql, Playground.class);
+            query.setParameter("lat", lat);
+            query.setParameter("lon", lon);
+            query.setParameter("radius", (double) radiusInMeters);
+            query.setParameter("earthRadius", earthRadiusInMeters);
+            query.setParameter("minLat", Math.max(-90.0, lat - radiusInDegrees));
+            query.setParameter("maxLat", Math.min(90.0, lat + radiusInDegrees));
+            query.setParameter("minLon", Math.max(-180.0, lon - longitudeRadiusInDegrees));
+            query.setParameter("maxLon", Math.min(180.0, lon + longitudeRadiusInDegrees));
+
+            return query.getResultList();
+        }
+    }
+
     @Override
     public Playground getById(Integer id) {
         try (EntityManager em = emf.createEntityManager()) {
