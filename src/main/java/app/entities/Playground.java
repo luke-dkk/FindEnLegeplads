@@ -45,6 +45,11 @@ public class Playground {
     @Builder.Default
     private Set<Rating> ratings = new HashSet<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "facility_enum")
+    private FacilityEnum facilityEnum;
+
+
     @Transient
     public double getAverageRating() {
         if (ratings == null || ratings.isEmpty()) {

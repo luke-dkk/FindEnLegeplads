@@ -20,7 +20,7 @@ PUT http://localhost:7075/api/checkins/1/checkin
 Authorization: Bearer {{token}}
 
 ### Checkout
-PUT http://localhost:7075/api/playgrounds/2/checkout
+PUT http://localhost:7075/api/playgrounds/1/checkout
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
