@@ -2,20 +2,7 @@
 GET http://localhost:7075/api/playgrounds
 Authorization: Bearer {{token}}
 
-### Get facility
-GET http://localhost:7075/api/playgrounds/1/facility
-Authorization: Bearer {{token}}
 
-### Update facility
-PUT http://localhost:7075/api/playgrounds/1/facility
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "toilet": true,
-  "swings": true,
-  "slide": true
-}
 
 ### import playgrounds
 

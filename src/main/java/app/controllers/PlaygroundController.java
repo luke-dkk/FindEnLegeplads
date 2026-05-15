@@ -135,10 +135,12 @@ public class PlaygroundController {
                 dto.getPlaygroundId(),
                 dto.getFacilityId()
         );
+        String facilityName = facilityDAO.getById(dto.getFacilityId()).getFacility();
+        String playgroundName = playgroundDAO.getById(dto.getPlaygroundId()).getName();
 
-
+        AttachFacilityDTO response = new AttachFacilityDTO(playgroundName,facilityName,dto.getPlaygroundId(),dto.getFacilityId());
         ctx.status(HttpStatus.CREATED);
-        ctx.json(dto);
+        ctx.json(response);
     }
 
     public void updateFacility(Context ctx) {
