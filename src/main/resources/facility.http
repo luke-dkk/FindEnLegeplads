@@ -1,0 +1,36 @@
+### Create a facility
+POST http://localhost:7075/api/facility/create
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Toilet"
+}
+### Create a facility
+POST http://localhost:7075/api/facility/create
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Gynger"
+}
+### Create a facility
+POST http://localhost:7075/api/facility/create
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Rutsjebane"
+}
+
+
+### add facility to playground
+POST http://localhost:7075/api/playgrounds/1/facility/attach
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "facility_id": 3,
+  "playground_id": 2
+}
+

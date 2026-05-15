@@ -1,83 +1,70 @@
 package app.services.mappers;
 
+import app.daos.FacilityDAO;
 import app.dtos.FacilityDTO;
 import app.entities.Facility;
 import app.entities.Playground;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
-public class FacilityMapper implements IMapper<Facility, FacilityDTO> {
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class FacilityMapper {
 
     private final EntityManagerFactory emf;
+    FacilityDAO facilityDAO;
 
     public FacilityMapper(EntityManagerFactory emf) {
         this.emf = emf;
+        this.facilityDAO = new FacilityDAO(emf);
     }
 
-    @Override
-    public Facility fromDTO(FacilityDTO facilityDTO) {
 
-        EntityManager em = emf.createEntityManager();
+    public Set<FacilityDTO> loopToDTO (Set<Facility> facility) {
+        if (facility == null) return null;
 
-        Facility facility = new Facility();
+        Set<FacilityDTO> dtos = new HashSet<>();
 
-        if (facilityDTO.getPlaygroundId() != null) {
-            Playground playground = em.find(Playground.class, facilityDTO.getPlaygroundId());
-            facility.setPlayground(playground);
+        for (Facility f : facility) {
+            FacilityDTO dto = new FacilityDTO();
+            dto.setId(f.getId());
+            dtos.add(dto);
         }
+        return dtos;
+    }
 
-        facility.setToilet(facilityDTO.isToilet());
-        facility.setSwings(facilityDTO.isSwings());
-        facility.setSandbox(facilityDTO.isSandbox());
-        facility.setSlide(facilityDTO.isSlide());
-        facility.setClimbingWall(facilityDTO.isClimbingWall());
-        facility.setSeesaw(facilityDTO.isSeesaw());
-        facility.setPlayHouse(facilityDTO.isPlayHouse());
-        facility.setMerryGoRound(facilityDTO.isMerryGoRound());
-        facility.setBasketballCourt(facilityDTO.isBasketballCourt());
-        facility.setSoccerField(facilityDTO.isSoccerField());
-        facility.setPicnicArea(facilityDTO.isPicnicArea());
-        facility.setLighting(facilityDTO.isLighting());
-        facility.setBenches(facilityDTO.isBenches());
-        facility.setDrinkingFountain(facilityDTO.isDrinkingFountain());
-        facility.setAccessibilityFeatures(facilityDTO.isAccessibilityFeatures());
-        facility.setFirstAidStation(facilityDTO.isFirstAidStation());
-        facility.setDogPark(facilityDTO.isDogPark());
-        facility.setMiscellaneous(facilityDTO.getMiscellaneous());
+    public Set<Facility> loopToFacility(Set<FacilityDTO> dto) {
+        if (dto == null) return null;
 
-        em.close();
+        Set <Facility> facilities = new HashSet<>();
 
+        for (FacilityDTO f : dto) {
+            Facility facility;
+            int id = f.getId();
+            facility = facilityDAO.getById(id);
+            facilities.add(facility);
+        }
+        return facilities;
+    }
+
+    public Facility toSingleFacility(FacilityDTO dto) {
+        if (dto == null) return null;
+
+        Facility facility = Facility.builder()
+                .facility(dto.getName())
+                .build();
         return facility;
     }
 
-    @Override
-    public FacilityDTO toDTO(Facility facility) {
+    public FacilityDTO toSingleDTO(Facility facility){
+        if (facility == null) return null;
 
-        FacilityDTO facilityDTO = new FacilityDTO();
-
-        if (facility.getId() != null) {
-            facilityDTO.setId(facility.getId());
-        }
-
-        facilityDTO.setToilet(facility.isToilet());
-        facilityDTO.setSwings(facility.isSwings());
-        facilityDTO.setSandbox(facility.isSandbox());
-        facilityDTO.setSlide(facility.isSlide());
-        facilityDTO.setClimbingWall(facility.isClimbingWall());
-        facilityDTO.setSeesaw(facility.isSeesaw());
-        facilityDTO.setPlayHouse(facility.isPlayHouse());
-        facilityDTO.setMerryGoRound(facility.isMerryGoRound());
-        facilityDTO.setBasketballCourt(facility.isBasketballCourt());
-        facilityDTO.setSoccerField(facility.isSoccerField());
-        facilityDTO.setPicnicArea(facility.isPicnicArea());
-        facilityDTO.setLighting(facility.isLighting());
-        facilityDTO.setBenches(facility.isBenches());
-        facilityDTO.setDrinkingFountain(facility.isDrinkingFountain());
-        facilityDTO.setAccessibilityFeatures(facility.isAccessibilityFeatures());
-        facilityDTO.setFirstAidStation(facility.isFirstAidStation());
-        facilityDTO.setDogPark(facility.isDogPark());
-        facilityDTO.setMiscellaneous(facility.getMiscellaneous());
-
-        return facilityDTO;
+        FacilityDTO dto = new FacilityDTO();
+        dto.setId(facility.getId());
+        dto.setName(facility.getFacility());
+        return dto;
     }
 }

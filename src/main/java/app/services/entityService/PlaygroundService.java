@@ -6,6 +6,7 @@ import app.dtos.FacilityDTO;
 import app.dtos.PlaygroundDTO;
 import app.entities.Facility;
 import app.entities.Playground;
+import app.services.mappers.FacilityMapper;
 import app.services.mappers.PlaygroundMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,10 +22,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 
 public class PlaygroundService implements IService<PlaygroundDTO> {
-
+    private final FacilityMapper facilityMapper;
     private final EntityManagerFactory emf;
     private final PlaygroundDAO playgroundDAO;
     private final PlaygroundMapper playgroundMapper;
@@ -35,8 +37,10 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
         this.playgroundDAO = new PlaygroundDAO(emf);
         this.playgroundMapper = new PlaygroundMapper(emf);
         this.facilityDAO = new FacilityDAO(emf);
+        this.facilityMapper = new FacilityMapper(emf);
     }
 
+    //this creates a playground
     @Override
     public PlaygroundDTO create(PlaygroundDTO dto) {
         Playground playground = playgroundMapper.fromDTO(dto);
@@ -82,118 +86,51 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
     }
 
 
-    public FacilityDTO getFacilityByPlaygroundId(Integer playgroundId) {
+    public Set<FacilityDTO> getFacilityByPlaygroundId(Integer playgroundId) {
         Playground playground = playgroundDAO.getById(playgroundId);
 
-        if (playground == null || playground.getFacility() == null) {
+        if (playground == null || playground.getFacilities() == null) {
             return null;
         }
 
-        return playgroundMapper.toFacilityDTO(playground.getFacility());
+        return facilityMapper.loopToDTO(playground.getFacilities());
     }
 
-    public FacilityDTO createFacility(Integer playgroundId, FacilityDTO dto) {
-        Playground playground = playgroundDAO.getById(playgroundId);
-
-        if (playground == null) {
-            throw new RuntimeException("Playground not found");
-        }
-
-        Facility facility = playgroundMapper.fromFacilityDTO(dto);
-
-        playground.addFacility(facility);
-
-        playgroundDAO.update(playgroundId, playground);
-
-        return playgroundMapper.toFacilityDTO(facility);
+    public FacilityDTO createFacility(FacilityDTO dto) {
+        Facility facility = facilityMapper.toSingleFacility(dto);
+        Facility created = facilityDAO.create(facility);
+        FacilityDTO response = facilityMapper.toSingleDTO(created);
+        return response;
     }
 
-    public FacilityDTO updateFacility(Integer playgroundId, FacilityDTO dto) {
+//    public FacilityDTO updateFacility(Integer playgroundId, FacilityDTO dto) {
+//
+//        Playground playground = playgroundDAO.getById(playgroundId);
+//
+//        if (playground == null) {
+//            throw new RuntimeException("Playground not found");
+//        }
+//
+//        Facility existingFacility = playground.getFacility();
+//
+//        Facility updatedFacility = playgroundMapper.fromFacilityDTO(dto);
+//
+//        if (existingFacility == null) {
+//            updatedFacility.setPlayground(playground);
+//            facilityDAO.create(updatedFacility);
+//        } else {
+//            updatedFacility.setId(existingFacility.getId());
+//            facilityDAO.update(existingFacility.getId(), updatedFacility);
+//        }
+//
+//        return playgroundMapper.toFacilityDTO(updatedFacility);
+//    }
 
-        Playground playground = playgroundDAO.getById(playgroundId);
+    public boolean deleteFacility(Integer facilityId) {
 
-        if (playground == null) {
-            throw new RuntimeException("Playground not found");
-        }
-
-        Facility existingFacility = playground.getFacility();
-
-        Facility updatedFacility = playgroundMapper.fromFacilityDTO(dto);
-
-        if (existingFacility == null) {
-            updatedFacility.setPlayground(playground);
-            facilityDAO.create(updatedFacility);
-        } else {
-            updatedFacility.setId(existingFacility.getId());
-            facilityDAO.update(existingFacility.getId(), updatedFacility);
-        }
-
-        return playgroundMapper.toFacilityDTO(updatedFacility);
-    }
-
-    public boolean deleteFacility(Integer playgroundId) {
-        Playground playground = playgroundDAO.getById(playgroundId);
-
-        if (playground == null || playground.getFacility() == null) {
-            return false;
-        }
-
-        playground.setFacility(null);
-
-        playgroundDAO.update(playgroundId, playground);
-
+        facilityDAO.delete(facilityId);
         return true;
     }
-
-//    public void importPlaygrounds(double latitude, double longitude, int radiusInMeters) {
-//        try {
-//            String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?"
-//                    + "location=" + latitude + "," + longitude
-//                    + "&radius=" + radiusInMeters
-//                    + "&keyword=playground"
-//                    + "&language=da"
-//                    + "&key=" + System.getenv("GOOGLE_API_KEY");
-//
-//            HttpClient client = HttpClient.newHttpClient();
-//            HttpRequest request = HttpRequest.newBuilder()
-//                    .uri(URI.create(url))
-//                    .GET()
-//                    .build();
-//
-//            HttpResponse<String> response =
-//                    client.send(request, HttpResponse.BodyHandlers.ofString());
-//
-//            ObjectMapper mapper = new ObjectMapper();
-//            JsonNode root = mapper.readTree(response.body());
-//            JsonNode results = root.get("results");
-//
-//            for (JsonNode place : results) {
-//
-//                String name = place.get("name").asText();
-//
-//                JsonNode location = place.get("geometry").get("location");
-//
-//                double lat = location.get("lat").asDouble();
-//                double lng = location.get("lng").asDouble();
-//
-//                Playground playground = Playground.builder()
-//                        .name(name)
-//                        .latitude(lat)
-//                        .longitude(lng)
-//                        .build();
-//                Facility facility = new Facility();
-//                facility.setPlayground(playground);
-//
-//                playground.setFacility(facility);
-//
-//                playgroundDAO.create(playground);
-//
-//            }
-//
-//        } catch (IOException | InterruptedException e) {
-//            throw new RuntimeException("Failed to import playgrounds", e);
-//        }
-//    }
 
     public void importPlaygrounds(double latitude, double longitude, int radiusInMeters) {
         try {
@@ -273,12 +210,6 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
                         .latitude(lat)
                         .longitude(lng)
                         .build();
-
-                Facility facility = new Facility();
-                facility.setPlayground(playground);
-
-                playground.setFacility(facility);
-
                 playgroundDAO.create(playground);
             }
 

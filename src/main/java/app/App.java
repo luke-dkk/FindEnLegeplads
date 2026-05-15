@@ -38,7 +38,7 @@ public class App {
 
         UserController userController = new UserController(userService);
         PlaygroundService playgroundService = new PlaygroundService(emf);
-        PlaygroundController playgroundController = new PlaygroundController(playgroundService, securityService);
+        PlaygroundController playgroundController = new PlaygroundController(playgroundService, securityService,emf);
         ChildController childController = new ChildController(emf);
         CheckInController checkInController = new CheckInController(emf);
 
@@ -46,8 +46,9 @@ public class App {
         PlaygroundRoutes playgroundRoutes = new PlaygroundRoutes(playgroundController, checkInController);
 
 
-        Routes routes = new Routes(userRoutes, playgroundRoutes, securityController, checkInController);
+        Routes routes = new Routes(userRoutes, playgroundRoutes, securityController, checkInController, playgroundController);
 //        playgroundService.importPlaygrounds(55.96417, 10.5525, 270000);
+        playgroundService.importPlaygrounds(55.96417, 10.5525, 10000);
 
 
         ApplicationConfig applicationConfig = new ApplicationConfig(securityService)

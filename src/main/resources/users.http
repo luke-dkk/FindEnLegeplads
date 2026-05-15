@@ -2,8 +2,7 @@
 GET http://localhost:7075/api/users
 Authorization: Bearer {{token}}
 
-### Delete user (ADMIN)
-DELETE http://localhost:7075/api/users/2
+### Delete userusers/2
 Authorization: Bearer {{token}}
 
 ### Add role

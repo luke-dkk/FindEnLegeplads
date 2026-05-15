@@ -1,9 +1,12 @@
 package app.entities;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.engine.internal.Nullability;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -31,11 +34,18 @@ public class Playground {
     @Column(name = "latitude", nullable = false)
     private double latitude;
 
-    @Column(name = "capacity")
+    @Column(name = "capacity", columnDefinition = "integer default 0")
     private Integer capacity;
 
-    @OneToOne(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
-    private Facility facility;
+    @Builder.Default
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "playground_facility",
+            joinColumns = @JoinColumn(name = "playground_id"),
+            inverseJoinColumns = @JoinColumn(name = "facility_id")
+    )
+    private Set<Facility> facilities = new HashSet<>();
+
 
     @OneToMany(mappedBy = "playground", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -45,7 +55,7 @@ public class Playground {
     @Builder.Default
     private Set<Rating> ratings = new HashSet<>();
 
-    @Transient
+
     public double getAverageRating() {
         if (ratings == null || ratings.isEmpty()) {
             return 3.5;
@@ -56,12 +66,19 @@ public class Playground {
                 .orElse(1.0);
     }
 
-
-
-    public void addFacility(Facility facility) {
-        this.facility = facility;
-        if(facility!=null) {
-            facility.setPlayground(this);
+    @PrePersist
+    public void setCapacity() {
+        if (this.capacity == null) {
+            this.capacity = 0;
         }
     }
+
+
+//
+//    public void addFacility(Facility facility) {
+//        this.facility.add(facility);
+//        if(facility!=null) {
+//            facility.setPlayground(this);
+//        }
+//    }
 }

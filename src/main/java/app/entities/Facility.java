@@ -1,7 +1,40 @@
+//package app.entities;
+//
+//import jakarta.persistence.*;
+//import lombok.*;
+//
+//@Getter
+//@Setter
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@Entity
+//@Builder
+//@Table(name ="facility")
+//public class Facility {
+//
+//    public Facility(int id, String facility) {
+//        this.id = id;
+//        this.facility = facility;
+//    }
+//
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "id")
+//    private Integer id;
+//    private String facility;
+//
+//
+//    @ManyToMany(mappedBy = "facility", cascade = CascadeType.MERGE)
+//    private Playground playground;
+//}
+
 package app.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -13,35 +46,12 @@ import lombok.*;
 public class Facility {
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private boolean toilet;
-    private boolean swings;
-    private boolean sandbox;
-    private boolean slide;
-    private boolean climbingWall;
-    private boolean seesaw;
-    private boolean playHouse;
-    private boolean merryGoRound;
-    private boolean basketballCourt;
-    private boolean glide;
-    private boolean soccerField;
-    private boolean picnicArea;
-    private boolean lighting;
-    private boolean benches;
-    private boolean drinkingFountain;
-    private boolean accessibilityFeatures;
-    private boolean firstAidStation;
-    private boolean dogPark;
-    private boolean climbingTree;
-    private boolean pokemonGoCenter;
-    private boolean trampoline;
-    private String miscellaneous;
+    private String facility;
 
-
-
-    @OneToOne
-    @MapsId
-    private Playground playground;
+    @Builder.Default
+    @ManyToMany(mappedBy = "facilities")
+    private Set<Playground> playgrounds = new HashSet<>();
 }
