@@ -48,6 +48,7 @@ public class PlaygroundMapper implements IMapper<Playground, PlaygroundDTO> {
         dto.setLongitude(playground.getLongitude());
         dto.setLatitude(playground.getLatitude());
         dto.setCapacity(playground.getCapacity());
+        dto.setFacility(facilityMapper.loopToDTO(playground.getFacilities()));
         return dto;
     }
 }
