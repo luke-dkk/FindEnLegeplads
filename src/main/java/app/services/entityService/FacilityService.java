@@ -23,16 +23,16 @@ public class FacilityService implements IService<FacilityDTO> {
 
     @Override
     public FacilityDTO create(FacilityDTO facilityDTO) {
-        Facility facility = facilityMapper.fromDTO(facilityDTO);
+        Facility facility = facilityMapper.toSingleFacility(facilityDTO);
         Facility createdFacility = facilityDAO.create(facility);
-        return facilityMapper.toDTO(createdFacility);
+        return facilityMapper.toSingleDTO(createdFacility);
     }
 
     @Override
     public List<FacilityDTO> getAll() {
         return facilityDAO.getAll()
                 .stream()
-                .map(facilityMapper::toDTO)
+                .map(facilityMapper::toSingleDTO)
                 .toList();
     }
 
@@ -44,30 +44,18 @@ public class FacilityService implements IService<FacilityDTO> {
             return null;
         }
 
-        return facilityMapper.toDTO(facility);
+        return facilityMapper.toSingleDTO(facility);
     }
 
     @Override
     public FacilityDTO update(FacilityDTO facilityDTO) {
-        Facility facility = facilityMapper.fromDTO(facilityDTO);
+        Facility facility = facilityMapper.toSingleFacility(facilityDTO);
         Facility updatedFacility = facilityDAO.update(facilityDTO.getId(), facility);
-        return facilityMapper.toDTO(updatedFacility);
+        return facilityMapper.toSingleDTO(updatedFacility);
     }
 
     @Override
     public boolean delete(Integer id) {
         return facilityDAO.delete(id);
-    }
-
-    public List<FacilityDTO> createFacilities(FacilityDTO[] facilityDTOs) {
-        List<FacilityDTO> createdFacilities = new ArrayList<>();
-
-        for (FacilityDTO facilityDTO : facilityDTOs) {
-            Facility facility = facilityMapper.fromDTO(facilityDTO);
-            Facility createdFacility = facilityDAO.create(facility);
-            createdFacilities.add(facilityMapper.toDTO(createdFacility));
-        }
-
-        return createdFacilities;
     }
 }

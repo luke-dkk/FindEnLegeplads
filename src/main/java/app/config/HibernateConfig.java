@@ -39,7 +39,7 @@ public final class HibernateConfig {
     private static void setDeployedProperties(Properties props) {
         String dbName = System.getenv("JDBC_DB");
         System.out.println("Det her er deployed");
-        props.setProperty("hibernate.connection.url", System.getenv("CONNECTION_STR") + "findenlegeplads");
+        props.setProperty("hibernate.connection.url", System.getenv("CONNECTION_STR") + "findenlegepladsenum");
         props.setProperty("hibernate.connection.username", System.getenv("DB_USERNAME"));
         props.setProperty("hibernate.connection.password", System.getenv("DB_PASSWORD"));
     }
@@ -50,7 +50,7 @@ public final class HibernateConfig {
         String username = Utils.getPropertyValue("DB_USERNAME", "config.properties");
         String password = Utils.getPropertyValue("DB_PASSWORD", "config.properties");
 
-        props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/" + dbName);
+        props.put("hibernate.connection.url", "jdbc:postgresql://134.209.203.235:5432/" + "findenlegepladsenum");
         props.put("hibernate.connection.username", username);
         props.put("hibernate.connection.password", password);
     }

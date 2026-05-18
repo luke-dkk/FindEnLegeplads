@@ -1,6 +1,9 @@
 package app.daos;
 
+import app.dtos.PlaygroundDTO;
+import app.entities.Facility;
 import app.entities.Playground;
+import app.services.mappers.PlaygroundMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
@@ -12,9 +15,10 @@ import java.util.Set;
 public class PlaygroundDAO implements IDAO<Playground> {
 
     private static EntityManagerFactory emf;
-
+    private final PlaygroundMapper playgroundMapper;
     public PlaygroundDAO(EntityManagerFactory emf) {
         this.emf = emf;
+        this.playgroundMapper = new PlaygroundMapper(emf);
     }
 
     public Playground create(Playground p) {
@@ -54,7 +58,7 @@ public class PlaygroundDAO implements IDAO<Playground> {
     public Set<Playground> getAll() {
         try (EntityManager em = emf.createEntityManager()) {
             TypedQuery<Playground> query =
-                    em.createQuery("SELECT p FROM Playground p LEFT JOIN FETCH p.facility", Playground.class);
+                    em.createQuery("SELECT p FROM Playground p LEFT JOIN FETCH p.facilities", Playground.class);
             return new HashSet<>(query.getResultList());
         }
     }
@@ -143,6 +147,45 @@ public class PlaygroundDAO implements IDAO<Playground> {
 
             em.getTransaction().rollback();
             return false;
+        }
+    }
+
+    public PlaygroundDTO attachFacility(Integer playgroundId, Integer facilityId) {
+
+        try (EntityManager em = emf.createEntityManager()) {
+
+            em.getTransaction().begin();
+
+            Playground playground =
+                    em.find(Playground.class, playgroundId);
+
+            Facility facility =
+                    em.find(Facility.class, facilityId);
+
+            if (playground == null) {
+                throw new IllegalArgumentException(
+                        "Playground not found"
+                );
+            }
+
+            if (facility == null) {
+                throw new IllegalArgumentException(
+                        "Facility not found"
+                );
+            }
+
+            // avoid duplicates
+            if (!playground.getFacilities().contains(facility)) {
+                playground.getFacilities().add(facility);
+            }
+
+            em.merge(playground);
+
+            em.getTransaction().commit();
+
+            PlaygroundDTO dtoResponse = playgroundMapper.toDTO(playground);
+
+            return dtoResponse;
         }
     }
 }

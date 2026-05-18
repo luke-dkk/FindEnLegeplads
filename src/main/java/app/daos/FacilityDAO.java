@@ -3,9 +3,12 @@ package app.daos;
 import app.entities.Facility;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
+import org.hibernate.HibernateError;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class FacilityDAO implements IDAO<Facility> {
@@ -17,20 +20,30 @@ public class FacilityDAO implements IDAO<Facility> {
     }
 
     public Facility create(Facility facility) {
+
         try (EntityManager em = emf.createEntityManager()) {
+
             em.getTransaction().begin();
+
+            List<Facility> existingFacilities = em.createQuery(
+                            "SELECT f FROM Facility f WHERE LOWER(f.facility) = :name",
+                            Facility.class
+                    )
+                    .setParameter("name", facility.getFacility().toLowerCase())
+                    .getResultList();
+
+            if (!existingFacilities.isEmpty()) {
+                return existingFacilities.get(0);
+            }
+
             em.persist(facility);
+
             em.getTransaction().commit();
+
+            return facility;
         }
-        return facility;
     }
 
-    public Long getFacilityCount() {
-        try (EntityManager em = emf.createEntityManager()) {
-            TypedQuery<Long> q1 = em.createQuery("SELECT COUNT(f) FROM Facility f", Long.class);
-            return q1.getSingleResult();
-        }
-    }
 
     @Override
     public Set<Facility> getAll() {
@@ -55,24 +68,7 @@ public class FacilityDAO implements IDAO<Facility> {
             Facility facility = em.find(Facility.class, id);
 
             if (facility != null) {
-                facility.setToilet(updatedFacility.isToilet());
-                facility.setSwings(updatedFacility.isSwings());
-                facility.setSandbox(updatedFacility.isSandbox());
-                facility.setSlide(updatedFacility.isSlide());
-                facility.setClimbingWall(updatedFacility.isClimbingWall());
-                facility.setSeesaw(updatedFacility.isSeesaw());
-                facility.setPlayHouse(updatedFacility.isPlayHouse());
-                facility.setMerryGoRound(updatedFacility.isMerryGoRound());
-                facility.setBasketballCourt(updatedFacility.isBasketballCourt());
-                facility.setSoccerField(updatedFacility.isSoccerField());
-                facility.setPicnicArea(updatedFacility.isPicnicArea());
-                facility.setLighting(updatedFacility.isLighting());
-                facility.setBenches(updatedFacility.isBenches());
-                facility.setDrinkingFountain(updatedFacility.isDrinkingFountain());
-                facility.setAccessibilityFeatures(updatedFacility.isAccessibilityFeatures());
-                facility.setFirstAidStation(updatedFacility.isFirstAidStation());
-                facility.setDogPark(updatedFacility.isDogPark());
-                facility.setMiscellaneous(updatedFacility.getMiscellaneous());
+                facility.setFacility(updatedFacility.getFacility());
                 em.getTransaction().commit();
                 return updatedFacility;
             }

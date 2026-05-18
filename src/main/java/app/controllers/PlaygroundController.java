@@ -1,12 +1,18 @@
 package app.controllers;
 
+import app.daos.FacilityDAO;
+import app.daos.PlaygroundDAO;
+import app.dtos.AttachFacilityDTO;
 import app.dtos.FacilityDTO;
 import app.dtos.LocationDTO;
 import app.dtos.PlaygroundDTO;
+import app.entities.Facility;
 import app.services.entityService.PlaygroundService;
+import app.services.mappers.FacilityMapper;
 import app.services.security.SecurityService;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import jakarta.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,19 +20,28 @@ import java.util.List;
 import java.util.Map;
 
 public class PlaygroundController {
-
+    private final FacilityDAO facilityDAO;
     private final PlaygroundService playgroundService;
     private final SecurityService securityService;
+    private final FacilityMapper facilityMapper;
+    private final PlaygroundDAO playgroundDAO;
     private final Logger logger = LoggerFactory.getLogger(PlaygroundController.class);
 
 
-    public PlaygroundController(PlaygroundService playgroundService, SecurityService securityService) {
-
+    public PlaygroundController(PlaygroundService playgroundService, SecurityService securityService, EntityManagerFactory emf) {
+        this.facilityDAO = new FacilityDAO(emf);
         this.playgroundService = playgroundService;
         this.securityService = securityService;
+        this.facilityMapper = new FacilityMapper(emf);
+        this.playgroundDAO = new PlaygroundDAO(emf);
     }
 
-
+    public void createFacility(Context ctx){
+        FacilityDTO dto = ctx.bodyAsClass(FacilityDTO.class);
+        FacilityDTO created = playgroundService.createFacility(dto);
+        ctx.json(created);
+        ctx.status(HttpStatus.CREATED);
+    }
 
     public void getAll(Context ctx) {
         ctx.json(playgroundService.getAll());
@@ -46,9 +61,9 @@ public class PlaygroundController {
         }
     }
 
-    public void create(Context ctx) {
-        PlaygroundDTO playgroundDTO = ctx.bodyAsClass(PlaygroundDTO.class);
-        PlaygroundDTO created = playgroundService.create(playgroundDTO);
+    public void createPlayground(Context ctx) {
+        PlaygroundDTO facilityDTO = ctx.bodyAsClass(PlaygroundDTO.class);
+        PlaygroundDTO created = playgroundService.create(facilityDTO);
 
         ctx.json(created);
         ctx.status(HttpStatus.CREATED);
@@ -99,39 +114,43 @@ public class PlaygroundController {
 
 
     public void getFacility(Context ctx) {
-        Integer playgroundId = getId(ctx);
+        Integer facilityID = getId(ctx);
 
-        FacilityDTO facility = playgroundService.getFacilityByPlaygroundId(playgroundId);
+        Facility facility = facilityDAO.getById(facilityID);
 
         if (facility != null) {
             ctx.status(HttpStatus.OK);
             ctx.json(facility);
         } else {
             ctx.status(HttpStatus.NOT_FOUND);
-            ctx.json(error("No facility found for playground", playgroundId));
-            logger.debug("Failed to get facility for playground with id: {} - not found", playgroundId);
+            ctx.json(error("No facility found for playground", facilityID));
+            logger.debug("Failed to get facility for playground with id: {} - not found", facilityID);
         }
     }
 
-    public void createFacility(Context ctx) {
-        Integer playgroundId = getId(ctx);
-        FacilityDTO dto = ctx.bodyAsClass(FacilityDTO.class);
+    public void attachFacility(Context ctx) {
+        AttachFacilityDTO dto = ctx.bodyAsClass(AttachFacilityDTO.class);
 
-        FacilityDTO created = playgroundService.createFacility(playgroundId, dto);
+        PlaygroundDTO updated = playgroundDAO.attachFacility(
+                dto.getPlaygroundId(),
+                dto.getFacilityId()
+        );
+        String facilityName = facilityDAO.getById(dto.getFacilityId()).getFacility();
+        String playgroundName = playgroundDAO.getById(dto.getPlaygroundId()).getName();
 
+        AttachFacilityDTO response = new AttachFacilityDTO(playgroundName,facilityName,dto.getPlaygroundId(),dto.getFacilityId());
         ctx.status(HttpStatus.CREATED);
-        ctx.json(created);
+        ctx.json(response);
     }
 
     public void updateFacility(Context ctx) {
-        Integer playgroundId = getId(ctx);
+        Integer facilityId = getId(ctx);
         FacilityDTO dto = ctx.bodyAsClass(FacilityDTO.class);
-
-        FacilityDTO updated = playgroundService.updateFacility(playgroundId, dto);
+        Facility updated = facilityDAO.update(facilityId, facilityMapper.toSingleFacility(dto));
 
         ctx.status(HttpStatus.OK);
         ctx.json(updated);
-        logger.info("Facility updated for playground with id: {}", playgroundId);
+        logger.info("Facility updated for playground with id: {}", facilityId);
     }
 
     public void deleteFacility(Context ctx) {
