@@ -31,6 +31,7 @@ public class FacilityMapper {
         for (Facility f : facility) {
             FacilityDTO dto = new FacilityDTO();
             dto.setId(f.getId());
+            dto.setName(f.getFacility());
             dtos.add(dto);
         }
         return dtos;
