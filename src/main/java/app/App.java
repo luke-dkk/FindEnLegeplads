@@ -48,7 +48,7 @@ public class App {
 
         Routes routes = new Routes(userRoutes, playgroundRoutes, securityController, checkInController, playgroundController);
 //        playgroundService.importPlaygrounds(55.96417, 10.5525, 270000);
-        playgroundService.importPlaygrounds(55.96417, 10.5525, 10000);
+//        playgroundService.importPlaygrounds(55.96417, 10.5525, 10000);
 
 
         ApplicationConfig applicationConfig = new ApplicationConfig(securityService)

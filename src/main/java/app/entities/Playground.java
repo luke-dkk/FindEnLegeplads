@@ -38,7 +38,7 @@ public class Playground {
     private Integer capacity;
 
     @Builder.Default
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(
             name = "playground_facility",
             joinColumns = @JoinColumn(name = "playground_id"),
