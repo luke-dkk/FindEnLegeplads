@@ -1,7 +1,9 @@
 package app.controllers;
 
+import app.dtos.ChildDTO;
 import app.dtos.RoleRequest;
 import app.dtos.UserDTO;
+import app.services.entityService.ChildService;
 import app.services.entityService.UserService;
 import app.dtos.AuthUserDTO;
 import io.javalin.http.Context;
@@ -10,16 +12,18 @@ import io.javalin.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.Map;
 
 public class UserController {
 
     private final UserService userService;
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final ChildService childService;
 
-
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ChildService childService) {
         this.userService = userService;
+        this.childService = childService;
     }
 
     public void getAll(Context ctx) {
@@ -31,6 +35,8 @@ public class UserController {
         Integer id = getId(ctx);
 
         UserDTO user = userService.getById(id);
+        HashSet<ChildDTO> child = childService.getByUserId(id);
+        user.setChildren(child);
 
         if (user != null) {
             ctx.status(HttpStatus.OK);

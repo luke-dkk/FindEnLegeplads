@@ -5,6 +5,7 @@ import app.config.HibernateConfig;
 import app.controllers.*;
 import app.dtos.UserDTO;
 import app.routes.*;
+import app.services.entityService.ChildService;
 import app.services.entityService.PlaygroundService;
 import app.services.entityService.UserService;
 import app.services.security.SecurityController;
@@ -32,11 +33,11 @@ public class App {
             userService.addRole("admin@test.com", "ADMIN");
         }
 
-
+        ChildService childService = new ChildService(emf);
         SecurityService securityService = new SecurityService(userService);
         SecurityController securityController = new SecurityController(securityService, userService);
 
-        UserController userController = new UserController(userService);
+        UserController userController = new UserController(userService, childService);
         PlaygroundService playgroundService = new PlaygroundService(emf);
         PlaygroundController playgroundController = new PlaygroundController(playgroundService, securityService,emf);
         ChildController childController = new ChildController(emf);

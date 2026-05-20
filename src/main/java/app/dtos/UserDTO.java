@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.util.HashSet;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -21,7 +23,12 @@ public class UserDTO {
     @JsonProperty("email")
     private String email;
 
+    @JsonProperty("children")
+    private HashSet<ChildDTO> children = new HashSet<>();
+
     @JsonProperty( access = JsonProperty.Access.WRITE_ONLY, value="password")
     private String password;
+
+
 
 }

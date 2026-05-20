@@ -9,7 +9,9 @@ import app.services.mappers.ChildMapper;
 import jakarta.persistence.EntityManagerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ChildService implements IService<ChildDTO> {
 
@@ -48,12 +50,12 @@ public class ChildService implements IService<ChildDTO> {
 
         return childMapper.toDTO(created);
     }
-    public List<ChildDTO> getByUserId(Integer userId) {
+    public HashSet<ChildDTO> getByUserId(Integer userId) {
 
-        return childDAO.getByUserId(userId)
+        return (HashSet<ChildDTO>) childDAO.getByUserId(userId)
                 .stream()
                 .map(childMapper::toDTO)
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     @Override
