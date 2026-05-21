@@ -28,6 +28,8 @@ public class UserRoutes {
             path("/{userId}/children", () -> {
                 get(childController::getByUser, Role.USER);
                 post(childController::createForUser, Role.USER);
+                put("/{childId}", childController::update, Role.USER);
+                delete("/{childId}", childController::delete, Role.USER);
             });
 
         };
