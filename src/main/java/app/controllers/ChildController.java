@@ -57,22 +57,24 @@ public class ChildController {
     }
 
     public void update(Context ctx){
-        Integer id = getId(ctx);
+        Integer childId = Integer.parseInt(
+                ctx.pathParam("childId")
+        );
         ChildDTO childDTO = ctx.bodyAsClass(ChildDTO.class);
 
-        if (childService.getById(id) != null){
-            childDTO.setId(id);
+        if (childService.getById(childId) != null){
+            childDTO.setId(childId);
             childService.update(childDTO);
             ctx.status(HttpStatus.OK);
             ctx.json(childDTO);
-            logger.info("Child updated with id: " + id);
+            logger.info("Child updated with id: " + childId);
         } else {
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.json(Map.of(
                     "message", "No child found with id",
-                    "id", id
+                    "id", childId
             ));
-            logger.info("child not found with id: " + id);
+            logger.info("child not found with id: " + childId);
         }
     }
 
