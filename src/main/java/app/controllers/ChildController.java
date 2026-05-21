@@ -35,24 +35,25 @@ public class ChildController {
     }
 
     public void delete(Context ctx){
-        Integer id = getId(ctx);
-        boolean deleted = childService.delete(id);
+        Integer childId = Integer.parseInt(
+                ctx.pathParam("childId")
+        );        boolean deleted = childService.delete(childId);
 
         if(deleted){
             ctx.status(HttpStatus.OK);
             ctx.json(Map.of(
                     "message", "Child deleted",
-                    "id", id
+                    "id", childId
             ));
-            logger.info("Child deleted with id: " + id);
+            logger.info("Child deleted with id: " + childId);
         } else {
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.json(Map.of(
                     "message", "No child found with id",
-                    "id", id
+                    "id", childId
 
             ));
-            logger.info("child not found with id: " + id);
+            logger.info("child not found with id: " + childId);
         }
     }
 
