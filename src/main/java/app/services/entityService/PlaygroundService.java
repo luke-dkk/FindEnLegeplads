@@ -221,12 +221,12 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
         }
     }
 
-    public List<PlaygroundDTO> getPlaygroundNearClient(double lat, double lon, int radiusInMeters) {
+    public List<PlaygroundDTO> getPlaygroundNearClient(double lat, double lon, int radiusInMeters, int page, int size) {
         if (radiusInMeters < 0) {
             throw new IllegalArgumentException("Radius must be zero or greater");
         }
 
-        return playgroundDAO.getPlaygroundsNearClient(lat, lon, radiusInMeters)
+        return playgroundDAO.getPlaygroundsNearClient(lat, lon, radiusInMeters, page, size)
                 .stream()
                 .map(playgroundMapper::toDTO)
                 .toList();

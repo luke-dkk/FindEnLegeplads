@@ -17,14 +17,17 @@ Content-Type: application/json
 }
 
 ### Post playgrounds near me
-POST {{base}}/playgrounds/nearme
+POST http://localhost:7075/api/playgrounds/nearme
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
   "latitude": 55.68,
   "longitude": 12.57,
-  "radiusInMeters": 1000
+  "radiusInMeters": 1000,
+  "size": 10,
+  "page": 1
+
 }
 
 ### Create playground

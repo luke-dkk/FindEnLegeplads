@@ -203,8 +203,12 @@ public class PlaygroundController {
         double lat = location.getLatitude();
         double lon = location.getLongitude();
         int radius = location.getRadiusInMeters();
+        int page = location.getPage();
+        int size = location.getSize();
 
-       List<PlaygroundDTO> playgroundDTOList= playgroundService.getPlaygroundNearClient(lat, lon, radius);
+
+
+       List<PlaygroundDTO> playgroundDTOList= playgroundService.getPlaygroundNearClient(lat, lon, radius, page, size);
 
        context.json(playgroundDTOList);
        context.status(HttpStatus.OK);

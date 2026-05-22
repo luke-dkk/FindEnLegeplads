@@ -22,12 +22,13 @@ public class PlaygroundRoutes {
         return () -> {
 
             get("/", playgroundController::getAll, Role.ANYONE);
+            post("/nearme",playgroundController::getPlaygroundsNearMe, Role.ANYONE );
+
             get("/{id}", playgroundController::getById, Role.ANYONE);
             post("/create", playgroundController::createPlayground, Role.ANYONE);
             put("/{id}", playgroundController::update, Role.ANYONE);
             delete("/{id}", playgroundController::delete, Role.ANYONE);
             post("/import", playgroundController::importPlaygrounds, Role.ADMIN);
-            post("/nearme",playgroundController::getPlaygroundsNearMe, Role.ANYONE );
 
             path("/{id}/facility", () -> {
                 get("",playgroundController::getFacility, Role.ANYONE);

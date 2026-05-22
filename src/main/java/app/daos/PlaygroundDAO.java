@@ -63,7 +63,8 @@ public class PlaygroundDAO implements IDAO<Playground> {
         }
     }
 
-    public List<Playground> getPlaygroundsNearClient(double lat, double lon, int radiusInMeters) {
+    public List<Playground> getPlaygroundsNearClient(double lat, double lon, int radiusInMeters, int page, int size) {
+
         double earthRadiusInMeters = 6371000.0;
         double radiusInDegrees = Math.toDegrees(radiusInMeters / earthRadiusInMeters);
         double latitudeRadians = Math.toRadians(lat);
@@ -83,7 +84,7 @@ public class PlaygroundDAO implements IDAO<Playground> {
         String jpql = """
                 SELECT p
                 FROM Playground p
-                LEFT JOIN FETCH p.facility
+                LEFT JOIN FETCH p.facilities
                 WHERE p.latitude BETWEEN :minLat AND :maxLat
                   AND p.longitude BETWEEN :minLon AND :maxLon
                   AND %s <= :radius
@@ -101,7 +102,11 @@ public class PlaygroundDAO implements IDAO<Playground> {
             query.setParameter("minLon", Math.max(-180.0, lon - longitudeRadiusInDegrees));
             query.setParameter("maxLon", Math.min(180.0, lon + longitudeRadiusInDegrees));
 
+            query.setFirstResult(page * size);
+            query.setMaxResults(size);
+
             return query.getResultList();
+
         }
     }
 

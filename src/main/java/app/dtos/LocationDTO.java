@@ -16,4 +16,9 @@ public class LocationDTO {
     private double longitude;
     @JsonProperty()
     private int radiusInMeters;
+    @JsonProperty()
+    private int page;
+    @JsonProperty()
+    private int size;
+
 }
