@@ -21,4 +21,5 @@ public class LocationDTO {
     @JsonProperty()
     private int size;
 
+
 }

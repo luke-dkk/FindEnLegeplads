@@ -33,6 +33,9 @@ public class PlaygroundDTO {
     @JsonProperty
     private Set<FacilityDTO> facility;
 
+    @JsonProperty()
+    private double distance;
+
 
 
 }

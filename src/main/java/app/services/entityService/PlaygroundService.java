@@ -135,14 +135,14 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
     public void importPlaygrounds(double latitude, double longitude, int radiusInMeters) {
         try {
             String overpassQuery = String.format(Locale.US, """
-        [out:json][timeout:60];
-        (
-          node["leisure"="playground"](around:%d,%.7f,%.7f);
-          way["leisure"="playground"](around:%d,%.7f,%.7f);
-          relation["leisure"="playground"](around:%d,%.7f,%.7f);
-        );
-        out center tags;
-        """,
+                            [out:json][timeout:60];
+                            (
+                              node["leisure"="playground"](around:%d,%.7f,%.7f);
+                              way["leisure"="playground"](around:%d,%.7f,%.7f);
+                              relation["leisure"="playground"](around:%d,%.7f,%.7f);
+                            );
+                            out center tags;
+                            """,
                     radiusInMeters, latitude, longitude,
                     radiusInMeters, latitude, longitude,
                     radiusInMeters, latitude, longitude
@@ -213,7 +213,7 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
                 playgroundDAO.create(playground);
             }
 
-        }  catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Failed to import playgrounds from Overpass", e);
         } catch (IOException e) {
@@ -228,7 +228,45 @@ public class PlaygroundService implements IService<PlaygroundDTO> {
 
         return playgroundDAO.getPlaygroundsNearClient(lat, lon, radiusInMeters, page, size)
                 .stream()
-                .map(playgroundMapper::toDTO)
+                .map(playground -> {
+
+                    PlaygroundDTO dto = playgroundMapper.toDTO(playground);
+
+                    double distance =
+                            calculateDistance(
+                                    lat,
+                                    lon,
+                                    playground.getLatitude(),
+                                    playground.getLongitude()
+                            );
+
+                    dto.setDistance(distance);
+
+                    return dto;
+                })
                 .toList();
+    }
+    private double calculateDistance(
+            double lat1,
+            double lon1,
+            double lat2,
+            double lon2
+    ) {
+
+        double earthRadius = 6371000;
+
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                        + Math.cos(Math.toRadians(lat1))
+                        * Math.cos(Math.toRadians(lat2))
+                        * Math.sin(dLon / 2)
+                        * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return earthRadius * c;
     }
 }
