@@ -33,4 +33,9 @@ Content-Type: application/json
   "facility_id": 3,
   "playground_id": 2
 }
+###
+GET http://localhost:7075/api/facility
+Content-Type: application/json
+
+
 

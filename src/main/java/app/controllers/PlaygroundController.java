@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PlaygroundController {
     private final FacilityDAO facilityDAO;
@@ -125,6 +126,25 @@ public class PlaygroundController {
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.json(error("No facility found for playground", facilityID));
             logger.debug("Failed to get facility for playground with id: {} - not found", facilityID);
+        }
+    }
+
+
+    public void getAllFacilities(Context ctx) {
+
+        Set<Facility> facility = facilityDAO.getAll();
+        Set<FacilityDTO> facilityDTOS = facilityMapper.loopToDTO(facility);
+
+
+
+        if (facilityDTOS != null) {
+            ctx.json(facilityDTOS);
+            ctx.status(HttpStatus.OK);
+
+        } else {
+            ctx.status(HttpStatus.NOT_FOUND);
+            ctx.json(error("No facilities found", null));
+            logger.debug("Failed to find facilities - none found");
         }
     }
 

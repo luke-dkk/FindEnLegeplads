@@ -30,6 +30,7 @@ public class Routes {
             get("/fortest", ctx -> ctx.result("Hello Fortest"), Role.ANYONE);
             path("/users", userRoutes.getRoutes());
             post("/facility/create", playgroundController::createFacility, Role.ANYONE);
+            get("/facility", playgroundController::getAllFacilities, Role.ANYONE);
             path("/playgrounds", playgroundRoutes.getRoutes());
             put("/checkins/{id}/checkin", checkInController::checkIn, Role.ANYONE);
             put("/checkins/{id}/checkout", checkInController::checkout, Role.ANYONE);
