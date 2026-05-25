@@ -37,5 +37,15 @@ Content-Type: application/json
 GET http://localhost:7075/api/facility
 Content-Type: application/json
 
+###
 
+### Create and attach facility
+POST http://localhost:7075/api/playgrounds/1/facility/createandattach
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "playground_id": 1,
+  "facility_name": "Førstehjælpsstation"
+}
 

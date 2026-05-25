@@ -15,6 +15,11 @@ public class AttachFacilityDTO {
 
     public AttachFacilityDTO(){}
 
+    public AttachFacilityDTO(String facility, Integer id) {
+        this.facilityName = facility;
+        this.facilityId = id;
+    }
+
     public AttachFacilityDTO(String playgroundName, String facilityName, Integer playgroundId, Integer facilityId) {
         this.playgroundId = playgroundId;
         this.facilityId = facilityId;
@@ -33,4 +38,6 @@ public class AttachFacilityDTO {
 
     @JsonProperty("facility_name")
     private String facilityName;
+
+
 }

@@ -13,6 +13,7 @@ import app.services.security.SecurityService;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import jakarta.persistence.EntityManagerFactory;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -232,5 +233,28 @@ public class PlaygroundController {
 
        context.json(playgroundDTOList);
        context.status(HttpStatus.OK);
+    }
+
+    public void createAndAttachFacility(Context ctx) {
+
+        AttachFacilityDTO dto = ctx.bodyAsClass(AttachFacilityDTO.class);
+        Facility facility =facilityDAO.findByName(dto.getFacilityName());
+
+        if (facility == null)
+        {
+            FacilityDTO created = playgroundService.createFacility(new FacilityDTO(
+                    dto.getFacilityName()));
+
+            facility =facilityDAO.getById(created.getId());
+        }
+
+        playgroundDAO.attachFacility(dto.getPlaygroundId(),facility.getId());
+
+        AttachFacilityDTO response =new AttachFacilityDTO(
+                        facility.getFacility(),
+                        facility.getId()
+                );
+        ctx.status(HttpStatus.CREATED);
+        ctx.json(response);
     }
 }

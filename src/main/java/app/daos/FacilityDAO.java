@@ -92,4 +92,15 @@ public class FacilityDAO implements IDAO<Facility> {
             return false;
         }
     }
+
+    public Facility findByName(String facilityName) {
+        try (EntityManager em = emf.createEntityManager()) {
+            return em.createQuery(
+                            "SELECT f FROM Facility f WHERE LOWER(f.facility) = :name", Facility.class)
+                    .setParameter("name", facilityName.toLowerCase())
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }

@@ -10,6 +10,12 @@ import lombok.*;
 @Builder
 public class FacilityDTO {
 
+    public FacilityDTO(String name) {
+        this.name = name;
+    }
+
+
+
     @JsonProperty("id")
     private Integer id;
     private String name;

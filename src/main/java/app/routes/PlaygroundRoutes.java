@@ -35,6 +35,7 @@ public class PlaygroundRoutes {
                 put("/update",playgroundController::updateFacility, Role.ANYONE);
                 post("/attach",playgroundController::attachFacility, Role.ANYONE);
                 delete(playgroundController::deleteFacility, Role.ANYONE);
+                post("/createandattach",playgroundController::createAndAttachFacility, Role.ANYONE);
             });
 
 
