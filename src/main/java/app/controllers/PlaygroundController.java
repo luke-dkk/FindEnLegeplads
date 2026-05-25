@@ -250,9 +250,9 @@ public class PlaygroundController {
 
         playgroundDAO.attachFacility(dto.getPlaygroundId(),facility.getId());
 
-        AttachFacilityDTO response =new AttachFacilityDTO(
-                        facility.getFacility(),
-                        facility.getId()
+        FacilityDTO response =new FacilityDTO(
+                facility.getId(),
+                facility.getFacility()
                 );
         ctx.status(HttpStatus.CREATED);
         ctx.json(response);

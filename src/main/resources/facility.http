@@ -45,7 +45,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "playground_id": 1,
-  "facility_name": "Førstehjælpsstation"
+  "playground_id": 3,
+  "facility_name": "KlatreTræ"
 }
 
