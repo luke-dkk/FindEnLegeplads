@@ -56,10 +56,7 @@ public class CheckInController {
 
     public void createCheckIn(Context ctx) {
 
-        CheckInDTO dto =
-                ctx.bodyAsClass(
-                        CheckInDTO.class
-                );
+        CheckInDTO dto = ctx.bodyAsClass(CheckInDTO.class);
 
         Integer playgroundId =Integer.parseInt(ctx.pathParam("id"));
 

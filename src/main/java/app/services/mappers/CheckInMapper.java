@@ -58,11 +58,10 @@ public class CheckInMapper implements IMapper<CheckIn, CheckInDTO> {
                 .id(entity.getId())
                 .playgroundId(entity.getPlayground().getId())
                 .userId(entity.getUser().getId())
-
-                .childIds(
-                        entity.getChildren().stream()
-                                .map(Child::getId)
-                                .collect(Collectors.toSet())
+                .childIds(entity.getChildren()
+                        .stream()
+                        .map(Child::getId)
+                        .collect(Collectors.toSet())
                 )
 
                 .plannedCheckIn(entity.getPlannedCheckIn())
