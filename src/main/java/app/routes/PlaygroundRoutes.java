@@ -47,12 +47,16 @@ public class PlaygroundRoutes {
             //findenlegeplads.dk/playgrounds/1/facility/update
 
             path("/{id}/checkins", () -> {
-                post(checkInController::create, Role.ANYONE);
+                post("/checkin", checkInController::createCheckIn, Role.USER);
+                put("/checkout", checkInController::checkoutFromPlayground,Role.USER);
+//                post(checkInController::create, Role.ANYONE);
                 get(checkInController::getByPlayground, Role.ANYONE);
             });
-            path("/{id}/checkout", () -> {
-                put(checkInController::checkout, Role.ANYONE);
-            });
+//            path("/{id}/checkout", () -> {
+//                post("checkout", checkInController::checkoutFromPlayground, Role.USER);
+
+//                put(checkInController::checkout, Role.ANYONE);
+//            });
         };
     }
 }

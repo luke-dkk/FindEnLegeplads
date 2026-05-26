@@ -32,8 +32,8 @@ public class Routes {
             post("/facility/create", playgroundController::createFacility, Role.ANYONE);
             get("/facility", playgroundController::getAllFacilities, Role.ANYONE);
             path("/playgrounds", playgroundRoutes.getRoutes());
-            put("/checkins/{id}/checkin", checkInController::checkIn, Role.ANYONE);
-            put("/checkins/{id}/checkout", checkInController::checkout, Role.ANYONE);
+//            put("/checkins/{id}/checkin", checkInController::checkIn, Role.ANYONE);
+//            put("/checkins/{id}/checkout", checkInController::checkoutFromPlayground, Role.USER);
             path("/auth", () -> {
                 post("/login", securityController::login);
                 post("/register", securityController::register);

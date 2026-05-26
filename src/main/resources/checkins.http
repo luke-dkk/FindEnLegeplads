@@ -28,9 +28,8 @@ Content-Type: application/json
   "user_id": 1
 }
 
-###
 ### Create checkin
-POST http://localhost:7075/api/playgrounds/3/checkins
+POST http://localhost:7075/api/playgrounds/6/checkins
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -39,3 +38,18 @@ Content-Type: application/json
   "user_id": 1
 
 }
+
+###
+
+### Create checkin
+POST http://localhost:7075/api/playgrounds/1/checkins/checkin
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "child_ids": [1],
+  "check_in": "2026-05-25T14:00:00"
+}
+###
+PUT http://localhost:7075/api/playgrounds/1/checkins/checkout
+Authorization: Bearer {{token}}

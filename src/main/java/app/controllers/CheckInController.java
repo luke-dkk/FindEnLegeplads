@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.daos.CheckInDAO;
 import app.daos.UserDAO;
 import app.dtos.CheckInDTO;
 import app.dtos.AuthUserDTO;
@@ -15,9 +16,11 @@ public class CheckInController {
 
     private final CheckInService checkInService;
     private final Logger logger = LoggerFactory.getLogger(CheckInController.class);
+    private final CheckInDAO checkInDAO;
 
     public CheckInController(EntityManagerFactory emf) {
         this.checkInService = new CheckInService(emf);
+        this.checkInDAO = new CheckInDAO(emf);
     }
 
     public void create(Context ctx) {
@@ -42,12 +45,57 @@ public class CheckInController {
         CheckInDTO updated = checkInService.checkIn(checkInId, user);
         ctx.json(updated);
     }
-    public void checkout(Context ctx) {
+//    public void checkout(Context ctx) {
+//
+//        Integer checkInId = ctx.pathParamAsClass("id", Integer.class).get();
+//        CheckInDTO dto = ctx.bodyAsClass(CheckInDTO.class);
+//        dto.setPlaygroundId(dto.getPlaygroundId());
+//        CheckInDTO updated = checkInService.checkout(checkInId, dto.getUserId());
+//        ctx.json(updated);
+//    }
 
-        Integer checkInId = ctx.pathParamAsClass("id", Integer.class).get();
-        CheckInDTO dto = ctx.bodyAsClass(CheckInDTO.class);
-        dto.setPlaygroundId(dto.getPlaygroundId());
-        CheckInDTO updated = checkInService.checkout(checkInId, dto.getUserId());
-        ctx.json(updated);
+    public void createCheckIn(Context ctx) {
+
+        CheckInDTO dto =
+                ctx.bodyAsClass(
+                        CheckInDTO.class
+                );
+
+        Integer playgroundId =Integer.parseInt(ctx.pathParam("id"));
+
+        dto.setPlaygroundId(
+                playgroundId
+        );
+
+        AuthUserDTO authUser =
+                ctx.attribute("user");
+
+        CheckInDTO created =
+                checkInDAO.createCheckIn(
+                        dto,
+                        authUser
+                );
+
+        ctx.status(HttpStatus.CREATED);
+        ctx.json(created);
     }
+    public void checkoutFromPlayground(Context ctx) {
+
+        Integer playgroundId =Integer.parseInt(ctx.pathParam("id"));
+
+
+
+        AuthUserDTO authUser =ctx.attribute("user");
+
+
+
+        CheckInDTO response =checkInDAO.checkoutFromPlayground(playgroundId,authUser.id());
+
+
+
+        ctx.status(HttpStatus.OK);
+
+        ctx.json(response);
+    }
+
 }
