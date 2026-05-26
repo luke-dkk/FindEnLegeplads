@@ -12,6 +12,7 @@ import app.entities.CheckIn;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CheckInDAO {
@@ -23,10 +24,7 @@ private final CheckInMapper checkInMapper;
         this.checkInMapper = new CheckInMapper(emf);
     }
 
-    public CheckInDTO createCheckIn(
-            CheckInDTO dto,
-            AuthUserDTO authUser
-    ) {
+    public CheckInDTO createCheckIn(CheckInDTO dto,AuthUserDTO authUser) {
 
         try (EntityManager em =
                      emf.createEntityManager()) {
@@ -96,9 +94,7 @@ private final CheckInMapper checkInMapper;
 
 
 
-                if (childHasActiveCheckIn(
-                        em,
-                        childId
+                if (childHasActiveCheckIn(em,childId
                 )) {
 
                     throw new RuntimeException(
@@ -152,14 +148,9 @@ private final CheckInMapper checkInMapper;
 
     public CheckInDTO checkoutFromPlayground(Integer playgroundId,Integer authUserId)
     {
-
-        try (EntityManager em =
-                     emf.createEntityManager()) {
-
+        try (EntityManager em =emf.createEntityManager())
+        {
             em.getTransaction().begin();
-
-
-
             CheckIn checkout =
                     em.createQuery(
                                     """
@@ -172,36 +163,14 @@ private final CheckInMapper checkInMapper;
                                     CheckIn.class
                             )
 
-                            .setParameter(
-                                    "userId",
-                                    authUserId
-                            )
-
-                            .setParameter(
-                                    "playgroundId",
-                                    playgroundId
-                            )
-
+                            .setParameter("userId",authUserId)
+                            .setParameter("playgroundId",playgroundId)
                             .getResultStream()
-
                             .findFirst()
-
                             .orElseThrow(() ->
-                                    new RuntimeException(
-                                            "No active checkin found"
-                                    )
-                            );
-
-
-
+                                    new RuntimeException("No active checkin found"));
             checkout.setCheckout(LocalDateTime.now());
-
-
-
             em.getTransaction().commit();
-
-
-
             return checkInMapper.toDTO(checkout);
         }
     }
@@ -327,6 +296,44 @@ private final CheckInMapper checkInMapper;
                 .getSingleResult();
 
         return count > 0;
+    }
+
+
+
+    public List<CheckInDTO> checkoutFromEveryWhere(Integer authUserId) {
+
+        try (EntityManager em = emf.createEntityManager()) {
+
+            em.getTransaction().begin();
+
+            List<CheckIn> checkouts = em.createQuery(
+                            """
+                            SELECT c
+                            FROM CheckIn c
+                            WHERE c.user.id = :userId
+                            AND c.checkout IS NULL
+                            """,
+                            CheckIn.class
+                    )
+
+
+                    .setParameter("userId", authUserId)
+                    .getResultList();
+
+            if (checkouts.isEmpty()) {
+                throw new RuntimeException("No active checkins found");
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+
+            checkouts.forEach(c -> c.setCheckout(now));
+
+            em.getTransaction().commit();
+
+            return checkouts.stream()
+                    .map(checkInMapper::toDTO)
+                    .toList();
+        }
     }
 
 //    public CheckInDTO checkoutFromPlayground(Integer checkInId,Integer authUserId)

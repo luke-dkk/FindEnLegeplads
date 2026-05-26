@@ -35,3 +35,8 @@ Content-Type: application/json
 ###
 PUT http://localhost:7075/api/playgrounds/1/checkins/checkout
 Authorization: Bearer {{token}}
+
+###
+POST http://localhost:7075/api/checkoutall
+Authorization: Bearer {{token}}
+

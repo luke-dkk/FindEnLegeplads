@@ -43,7 +43,7 @@ public class App {
         ChildController childController = new ChildController(emf);
         CheckInController checkInController = new CheckInController(emf);
 
-        UserRoutes userRoutes = new UserRoutes(userController, childController);
+        UserRoutes userRoutes = new UserRoutes(userController, childController, checkInController);
         PlaygroundRoutes playgroundRoutes = new PlaygroundRoutes(playgroundController, checkInController);
 
 

@@ -38,8 +38,8 @@ public class Routes {
                 post("/login", securityController::login);
                 post("/register", securityController::register);
             });
-
-        };
+            post("/checkoutall", checkInController::checkoutFromEverywhere, Role.USER);
+                 };
     }
 }
 

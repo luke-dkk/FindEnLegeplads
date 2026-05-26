@@ -12,6 +12,8 @@ import jakarta.persistence.EntityManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class CheckInController {
 
     private final CheckInService checkInService;
@@ -77,21 +79,16 @@ public class CheckInController {
         ctx.json(created);
     }
     public void checkoutFromPlayground(Context ctx) {
-
         Integer playgroundId =Integer.parseInt(ctx.pathParam("id"));
-
-
-
         AuthUserDTO authUser =ctx.attribute("user");
-
-
-
         CheckInDTO response =checkInDAO.checkoutFromPlayground(playgroundId,authUser.id());
-
-
-
         ctx.status(HttpStatus.OK);
-
+        ctx.json(response);
+    }
+    public void checkoutFromEverywhere(Context ctx) {
+        AuthUserDTO authUser =ctx.attribute("user");
+        List<CheckInDTO> response =checkInDAO.checkoutFromEveryWhere(authUser.id());
+        ctx.status(HttpStatus.OK);
         ctx.json(response);
     }
 
