@@ -26,59 +26,21 @@ private final CheckInMapper checkInMapper;
 
     public CheckInDTO createCheckIn(CheckInDTO dto,AuthUserDTO authUser) {
 
-        try (EntityManager em =
-                     emf.createEntityManager()) {
-
+        try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
-
-
-
-            User user =
-                    em.find(
-                            User.class,
-                            authUser.id()
-                    );
-
-
-
-            Playground playground =
-                    em.find(
-                            Playground.class,
-                            dto.getPlaygroundId()
-                    );
-
-
-
-            if (playground == null) {
-
+            User user = em.find(User.class, authUser.id());
+            Playground playground = em.find(Playground.class, dto.getPlaygroundId());
+            if (playground == null)
+            {
                 throw new RuntimeException(
                         "Playground not found"
                 );
             }
+            Set<Child> children = new HashSet<>();
+            for (Integer childId : dto.getChildIds()) {
 
-
-
-            Set<Child> children =
-                    new HashSet<>();
-
-
-
-            for (Integer childId :
-                    dto.getChildIds()) {
-
-                Child child =
-                        em.find(
-                                Child.class,
-                                childId
-                        );
-
-
-
-                if (child == null) {
-
-                    throw new RuntimeException(
-                            "Child not found"
-                    );
+                Child child = em.find(Child.class, childId);
+                if (child == null) {throw new RuntimeException("Child not found");
                 }
 
 
@@ -87,62 +49,24 @@ private final CheckInMapper checkInMapper;
                         .getId()
                         .equals(authUser.id())) {
 
-                    throw new RuntimeException(
-                            "Child does not belong to user"
-                    );
+                    throw new RuntimeException("Child does not belong to user");
                 }
-
-
-
                 if (childHasActiveCheckIn(em,childId
-                )) {
-
-                    throw new RuntimeException(
-                            "Child is already checked in"
-                    );
+                )) {throw new RuntimeException("Child is already checked in");
                 }
-
-
-
                 children.add(child);
             }
-
-
-
-            CheckIn checkIn =
-                    CheckIn.builder()
-
+            CheckIn checkIn =CheckIn.builder()
                             .user(user)
-
                             .playground(playground)
-
                             .children(children)
-
-                            .checkIn(
-                                    LocalDateTime.now()
-                            )
-
-                            .plannedCheckIn(
-                                    dto.getPlannedCheckIn()
-                            )
-
-                            .plannedCheckout(
-                                    dto.getPlannedCheckOut()
-                            )
-
+                            .checkIn(LocalDateTime.now())
+                            .plannedCheckIn(dto.getPlannedCheckIn())
+                            .plannedCheckout(dto.getPlannedCheckOut())
                             .build();
-
-
-
             em.persist(checkIn);
-
             em.getTransaction().commit();
-
-
-
-            return checkInMapper.toDTO(
-                    checkIn
-            );
+            return checkInMapper.toDTO(checkIn);
         }
     }
 
