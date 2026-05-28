@@ -4,6 +4,9 @@ import app.dtos.ChildDTO;
 import app.entities.Child;
 import jakarta.persistence.EntityManagerFactory;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ChildMapper implements IMapper<Child, ChildDTO> {
 
     private final EntityManagerFactory emf;
@@ -40,4 +43,24 @@ public class ChildMapper implements IMapper<Child, ChildDTO> {
         childDTO.setSex(child.getSex());
         return childDTO;
     }
-}
+
+    public Set<ChildDTO> loopToDTO(Set<Child> children) {
+        Set<ChildDTO> result = new HashSet<>();
+
+        for (Child c : children) {
+            result.add(toDTO(c));
+        }
+        return result;
+    }
+
+
+    public Set<Child> loopFromDTO(Set<ChildDTO> children){
+        Set<Child> result = new HashSet<>();
+
+        for (ChildDTO c : children) {
+            result.add(fromDTO(c));
+        }
+        return result;
+    }
+    }
+

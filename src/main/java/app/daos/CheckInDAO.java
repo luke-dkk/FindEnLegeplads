@@ -1,6 +1,7 @@
 package app.daos;
 import app.dtos.AuthUserDTO;
 import app.dtos.CheckInDTO;
+import app.dtos.ChildDTO;
 import app.services.mappers.CheckInMapper;
 import io.javalin.http.ForbiddenResponse;
 import jakarta.persistence.EntityManager;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CheckInDAO {
 private static EntityManagerFactory emf;
@@ -37,9 +39,9 @@ private final CheckInMapper checkInMapper;
                 );
             }
             Set<Child> children = new HashSet<>();
-            for (Integer childId : dto.getChildIds()) {
+            for (ChildDTO childDTO : dto.getChildren()) {
 
-                Child child = em.find(Child.class, childId);
+                Child child = em.find(Child.class, childDTO.getId());
                 if (child == null) {throw new RuntimeException("Child not found");
                 }
 
@@ -51,8 +53,8 @@ private final CheckInMapper checkInMapper;
 
                     throw new RuntimeException("Child does not belong to user");
                 }
-                if (childHasActiveCheckIn(em,childId
-                )) {throw new RuntimeException("Child is already checked in");
+                if (childHasActiveCheckIn(em,childDTO.getId()))
+                {throw new RuntimeException("Child is already checked in");
 
                 }
                 children.add(child);
@@ -258,6 +260,29 @@ private final CheckInMapper checkInMapper;
             return checkouts.stream()
                     .map(checkInMapper::toDTO)
                     .toList();
+        }
+    }
+
+    public Set<CheckInDTO> getActiveCheckIns(Integer userId) {
+
+        try (EntityManager em = emf.createEntityManager()) {
+
+            List<CheckIn> activeCheckIns =
+                    em.createQuery(
+                                    """
+                                    SELECT c
+                                    FROM CheckIn c
+                                    WHERE c.user.id = :userId
+                                    AND c.checkout IS NULL
+                                    """,
+                                    CheckIn.class
+                            )
+                            .setParameter("userId", userId)
+                            .getResultList();
+
+            return activeCheckIns.stream()
+                    .map(checkInMapper::toDTO)
+                    .collect(Collectors.toSet());
         }
     }
 

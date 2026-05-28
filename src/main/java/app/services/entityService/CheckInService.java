@@ -39,12 +39,12 @@ public class CheckInService {
                 throw new RuntimeException("Playground not found");
             }
 
-            Set<Child> children = dto.getChildIds().stream()
-                    .map(id -> {
-                        Child child = em.find(Child.class, id);
+            Set<Child> children = dto.getChildren().stream()
+                    .map(childDTO -> {
+                        Child child = em.find(Child.class, childDTO.getId());
 
                         if (child == null) {
-                            throw new RuntimeException("Child not found: " + id);
+                            throw new RuntimeException("Child not found: " + childDTO.getId());
                         }
 
                         if (!child.getUser().getId().equals(user.getId())) {

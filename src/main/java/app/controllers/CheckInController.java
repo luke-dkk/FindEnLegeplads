@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CheckInController {
 
@@ -99,4 +100,10 @@ public class CheckInController {
         ctx.json(response);
     }
 
+    public void getCheckinsByUserId(Context ctx){
+        Integer userId = Integer.parseInt(ctx.pathParam("userId"));
+        Set<CheckInDTO> checkIns = checkInDAO.getActiveCheckIns(userId);
+        ctx.status(HttpStatus.OK);
+        ctx.json(checkIns);
+    }
 }

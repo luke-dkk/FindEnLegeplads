@@ -11,9 +11,10 @@ import java.util.stream.Collectors;
 public class CheckInMapper implements IMapper<CheckIn, CheckInDTO> {
 
     private final EntityManagerFactory emf;
-
+    private ChildMapper childMapper;
     public CheckInMapper(EntityManagerFactory emf) {
         this.emf = emf;
+        this.childMapper = new ChildMapper(emf);
     }
 
     @Override
@@ -33,12 +34,8 @@ public class CheckInMapper implements IMapper<CheckIn, CheckInDTO> {
             User user = em.find(User.class, dto.getUserId());
             checkIn.setUser(user);
 
-            if (dto.getChildIds() != null) {
-                Set<Child> children = dto.getChildIds().stream()
-                        .map(id -> em.find(Child.class, id))
-                        .collect(Collectors.toSet());
-
-                checkIn.setChildren(children);
+            if (dto.getChildren() != null) {
+               checkIn.setChildren(childMapper.loopFromDTO(dto.getChildren()));
             }
 
             // tider
@@ -58,11 +55,7 @@ public class CheckInMapper implements IMapper<CheckIn, CheckInDTO> {
                 .id(entity.getId())
                 .playgroundId(entity.getPlayground().getId())
                 .userId(entity.getUser().getId())
-                .childIds(entity.getChildren()
-                        .stream()
-                        .map(Child::getId)
-                        .collect(Collectors.toSet())
-                )
+                .children(childMapper.loopToDTO(entity.getChildren()))
 
                 .plannedCheckIn(entity.getPlannedCheckIn())
                 .plannedCheckOut(entity.getPlannedCheckout())

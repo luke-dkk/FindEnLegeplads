@@ -48,6 +48,7 @@ public class PlaygroundRoutes {
 
             path("/{id}/checkins", () -> {
                 post("/checkin", checkInController::createCheckIn, Role.USER);
+                get("/checkin/{userId}", checkInController::getCheckinsByUserId, Role.USER);
                 put("/checkout", checkInController::checkoutFromPlayground,Role.USER);
 //                post(checkInController::create, Role.ANYONE);
                 get(checkInController::getByPlayground, Role.ANYONE);
