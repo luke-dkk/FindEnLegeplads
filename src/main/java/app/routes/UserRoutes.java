@@ -23,7 +23,7 @@ public class UserRoutes {
      public EndpointGroup getRoutes() {
         return () -> {
             get("/", userController::getAll, Role.ANYONE);
-            get("/{id}", userController::getById, Role.ADMIN);
+            get("/{id}", userController::getById, Role.USER);
             post("/register", userController::create);
             delete("/{id}", userController::delete, Role.USER);
             put("/{id}", userController::update, Role.USER);
