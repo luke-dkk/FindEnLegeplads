@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 public class CheckInController {
 
@@ -77,7 +78,10 @@ public class CheckInController {
         catch (RuntimeException e)
         {
             ctx.status(HttpStatus.BAD_REQUEST);
-            ctx.json(e.getMessage());
+            ctx.json(Map.of(
+                    "message",
+                    e.getMessage()
+            ));
         }
 
     }
