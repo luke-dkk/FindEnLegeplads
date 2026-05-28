@@ -38,7 +38,6 @@ public class CheckInMapper implements IMapper<CheckIn, CheckInDTO> {
                checkIn.setChildren(childMapper.loopFromDTO(dto.getChildren()));
             }
 
-            // tider
             checkIn.setPlannedCheckIn(dto.getPlannedCheckIn());
             checkIn.setPlannedCheckout(dto.getPlannedCheckOut());
             checkIn.setCheckIn(dto.getCheckIn());
