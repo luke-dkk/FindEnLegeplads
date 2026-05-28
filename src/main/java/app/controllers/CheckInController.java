@@ -69,14 +69,17 @@ public class CheckInController {
         AuthUserDTO authUser =
                 ctx.attribute("user");
 
-        CheckInDTO created =
-                checkInDAO.createCheckIn(
-                        dto,
-                        authUser
-                );
+        try {
+            CheckInDTO created = checkInDAO.createCheckIn(dto, authUser);
+            ctx.status(HttpStatus.CREATED);
+            ctx.json(created);
+        }
+        catch (RuntimeException e)
+        {
+            ctx.status(HttpStatus.BAD_REQUEST);
+            ctx.json(e.getMessage());
+        }
 
-        ctx.status(HttpStatus.CREATED);
-        ctx.json(created);
     }
     public void checkoutFromPlayground(Context ctx) {
         Integer playgroundId =Integer.parseInt(ctx.pathParam("id"));

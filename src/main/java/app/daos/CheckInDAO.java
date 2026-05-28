@@ -53,6 +53,7 @@ private final CheckInMapper checkInMapper;
                 }
                 if (childHasActiveCheckIn(em,childId
                 )) {throw new RuntimeException("Child is already checked in");
+
                 }
                 children.add(child);
             }
