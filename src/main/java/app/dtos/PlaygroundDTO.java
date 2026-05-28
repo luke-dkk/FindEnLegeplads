@@ -36,6 +36,8 @@ public class PlaygroundDTO {
     @JsonProperty()
     private double distance;
 
+    @JsonProperty("currently_checked_in")
+    private Integer currentlyCheckedIn;
 
 
 }
