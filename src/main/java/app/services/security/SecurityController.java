@@ -25,7 +25,7 @@ public class SecurityController {
 
         ctx.json(Map.of(
                 "token", token,
-                "email", user.email
+                "email", user.email.toLowerCase()
         ));
     }
     public void register(Context ctx) {

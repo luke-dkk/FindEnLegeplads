@@ -27,9 +27,10 @@ public class UserService implements IService<UserDTO> {
     public UserDTO create(UserDTO userDTO) {
 
         String hashedPassword = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt());
-
+        String email = userDTO.getEmail().toLowerCase();
         User user = userMapper.fromDTO(userDTO);
         user.setPassword(hashedPassword);
+        user.setEmail(email);
 
         User createdUser = userDAO.create(user);
 
