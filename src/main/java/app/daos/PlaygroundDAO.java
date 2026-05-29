@@ -109,6 +109,25 @@ public class PlaygroundDAO implements IDAO<Playground> {
 
         }
     }
+    public Integer getCheckedInChildrenCount(Integer playgroundId) {
+
+        try (EntityManager em =emf.createEntityManager()) {
+            Long count =
+                    em.createQuery(
+                                    """
+                                    SELECT COUNT(child)
+                                    FROM CheckIn c
+                                    JOIN c.children child
+                                    WHERE c.playground.id = :playgroundId
+                                    AND c.checkout IS NULL
+                                    """,
+                                    Long.class
+                            )
+                            .setParameter("playgroundId",playgroundId)
+                            .getSingleResult();
+            return count.intValue();
+        }
+    }
 
     @Override
     public Playground getById(Integer id) {
