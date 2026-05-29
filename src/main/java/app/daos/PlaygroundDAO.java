@@ -15,10 +15,8 @@ import java.util.Set;
 public class PlaygroundDAO implements IDAO<Playground> {
 
     private static EntityManagerFactory emf;
-    private final PlaygroundMapper playgroundMapper;
     public PlaygroundDAO(EntityManagerFactory emf) {
         this.emf = emf;
-        this.playgroundMapper = new PlaygroundMapper(emf);
     }
 
     public Playground create(Playground p) {
@@ -112,8 +110,7 @@ public class PlaygroundDAO implements IDAO<Playground> {
     public Integer getCheckedInChildrenCount(Integer playgroundId) {
 
         try (EntityManager em =emf.createEntityManager()) {
-            Long count =
-                    em.createQuery(
+            Long count = em.createQuery(
                                     """
                                     SELECT COUNT(child)
                                     FROM CheckIn c
@@ -174,14 +171,11 @@ public class PlaygroundDAO implements IDAO<Playground> {
         }
     }
 
-    public PlaygroundDTO attachFacility(Integer playgroundId, Integer facilityId) {
+    public Playground attachFacility(Integer playgroundId, Integer facilityId) {
 
-        try (EntityManager em = emf.createEntityManager()) {
+        try (EntityManager em = emf.createEntityManager()) {em.getTransaction().begin();
 
-            em.getTransaction().begin();
-
-            Playground playground =
-                    em.find(Playground.class, playgroundId);
+            Playground playground = em.find(Playground.class, playgroundId);
 
             Facility facility =
                     em.find(Facility.class, facilityId);
@@ -198,7 +192,6 @@ public class PlaygroundDAO implements IDAO<Playground> {
                 );
             }
 
-            // avoid duplicates
             if (!playground.getFacilities().contains(facility)) {
                 playground.getFacilities().add(facility);
             }
@@ -207,9 +200,8 @@ public class PlaygroundDAO implements IDAO<Playground> {
 
             em.getTransaction().commit();
 
-            PlaygroundDTO dtoResponse = playgroundMapper.toDTO(playground);
 
-            return dtoResponse;
+            return playground;
         }
     }
 }

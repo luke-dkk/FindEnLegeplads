@@ -7,8 +7,10 @@ import app.dtos.FacilityDTO;
 import app.dtos.LocationDTO;
 import app.dtos.PlaygroundDTO;
 import app.entities.Facility;
+import app.entities.Playground;
 import app.services.entityService.PlaygroundService;
 import app.services.mappers.FacilityMapper;
+import app.services.mappers.PlaygroundMapper;
 import app.services.security.SecurityService;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
@@ -27,7 +29,9 @@ public class PlaygroundController {
     private final SecurityService securityService;
     private final FacilityMapper facilityMapper;
     private final PlaygroundDAO playgroundDAO;
+    private final PlaygroundMapper playgroundMapper;
     private final Logger logger = LoggerFactory.getLogger(PlaygroundController.class);
+
 
 
     public PlaygroundController(PlaygroundService playgroundService, SecurityService securityService, EntityManagerFactory emf) {
@@ -36,6 +40,7 @@ public class PlaygroundController {
         this.securityService = securityService;
         this.facilityMapper = new FacilityMapper(emf);
         this.playgroundDAO = new PlaygroundDAO(emf);
+        this.playgroundMapper = new PlaygroundMapper(emf);
     }
 
     public void createFacility(Context ctx){
@@ -152,7 +157,7 @@ public class PlaygroundController {
     public void attachFacility(Context ctx) {
         AttachFacilityDTO dto = ctx.bodyAsClass(AttachFacilityDTO.class);
 
-        PlaygroundDTO updated = playgroundDAO.attachFacility(
+        playgroundDAO.attachFacility(
                 dto.getPlaygroundId(),
                 dto.getFacilityId()
         );

@@ -30,8 +30,8 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "facility_id": 3,
-  "playground_id": 2
+  "facility_id": 2,
+  "playground_id": 5
 }
 ###
 GET http://localhost:7075/api/facility

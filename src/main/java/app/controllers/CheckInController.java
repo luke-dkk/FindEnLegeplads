@@ -64,12 +64,9 @@ public class CheckInController {
 
         Integer playgroundId =Integer.parseInt(ctx.pathParam("id"));
 
-        dto.setPlaygroundId(
-                playgroundId
-        );
+        dto.setPlaygroundId(playgroundId);
 
-        AuthUserDTO authUser =
-                ctx.attribute("user");
+        AuthUserDTO authUser = ctx.attribute("user");
 
         try {
             CheckInDTO created = checkInDAO.createCheckIn(dto, authUser);

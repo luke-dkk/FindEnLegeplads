@@ -15,11 +15,15 @@ public class PlaygroundMapper implements IMapper<Playground, PlaygroundDTO> {
     private final FacilityMapper facilityMapper;
     private final EntityManagerFactory emf;
     private final FacilityDAO facilityDAO;
+    private final PlaygroundDAO playgroundDAO;
+
+
 
     public PlaygroundMapper(EntityManagerFactory emf) {
         this.emf = emf;
         this.facilityDAO = new FacilityDAO(emf);
         this.facilityMapper = new FacilityMapper(emf);
+        this.playgroundDAO = new PlaygroundDAO(emf);
     }
 
     @Override
@@ -48,6 +52,8 @@ public class PlaygroundMapper implements IMapper<Playground, PlaygroundDTO> {
         dto.setLongitude(playground.getLongitude());
         dto.setLatitude(playground.getLatitude());
         dto.setCapacity(playground.getCapacity());
+        dto.setCurrentlyCheckedIn(playgroundDAO.getCheckedInChildrenCount(dto.getId()));
+
         dto.setFacility(facilityMapper.loopToDTO(playground.getFacilities()));
 
         return dto;
