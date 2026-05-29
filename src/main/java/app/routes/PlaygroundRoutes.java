@@ -44,11 +44,10 @@ public class PlaygroundRoutes {
 
             //findenlegeplads.dk/playgrounds/1/facility/attach
             //findenlegeplads.dk/playgrounds/1/facility/update
-            //findenlegeplads.dk/playgrounds/1/facility/update
+            //findenlegeplads.dk/playgrounds/1/checkin/1
 
             path("/{id}/checkins", () -> {
                 post("/checkin", checkInController::createCheckIn, Role.USER);
-                get("/checkin/{userId}", checkInController::getCheckinsByUserId, Role.USER);
                 put("/checkout", checkInController::checkoutFromPlayground,Role.USER);
 //                post(checkInController::create, Role.ANYONE);
                 get(checkInController::getByPlayground, Role.ANYONE);

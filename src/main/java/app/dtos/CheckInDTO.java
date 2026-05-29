@@ -24,7 +24,7 @@ public class CheckInDTO {
     @JsonProperty("user_id")
     private Integer userId;
 
-    @JsonProperty("Children")
+    @JsonProperty("children")
     private Set<ChildDTO> children;
 
     @JsonProperty("planned_check_in")

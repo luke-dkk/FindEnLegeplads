@@ -39,6 +39,7 @@ public class Routes {
                 post("/register", securityController::register);
             });
             post("/checkoutall", checkInController::checkoutFromEverywhere, Role.USER);
+            get("/checkin/{userId}", checkInController::getCheckinsByUserId, Role.USER);
                  };
     }
 }
