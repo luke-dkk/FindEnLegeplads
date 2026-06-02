@@ -3,7 +3,7 @@ GET http://localhost:7075/api/playgrounds
 Authorization: Bearer {{token}}
 
 ###
-GET http://localhost:7075/api/playgrounds/3
+GET http://localhost:7075/api/playgrounds/1
 Authorization: Bearer {{token}}
 
 ### import playgrounds
@@ -18,7 +18,7 @@ Content-Type: application/json
   "radius": 1000
 }
 
-### Post playgrounds near me
+### Get playgrounds near me
 POST http://localhost:7075/api/playgrounds/nearme
 Authorization: Bearer {{token}}
 Content-Type: application/json
