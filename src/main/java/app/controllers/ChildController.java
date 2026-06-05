@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.daos.CheckInDAO;
 import app.dtos.ChildDTO;
 import app.services.entityService.ChildService;
 import app.dtos.AuthUserDTO;
@@ -16,10 +17,12 @@ public class ChildController {
 
     private final ChildService childService;
     private final Logger logger = LoggerFactory.getLogger(ChildController.class);
+    private final CheckInDAO checkInDAO;
 
 
     public ChildController(EntityManagerFactory emf) {
         this.childService = new ChildService(emf);
+        this.checkInDAO = new CheckInDAO(emf);
     }
 
     public void getChildren(Context ctx){
@@ -35,9 +38,10 @@ public class ChildController {
     }
 
     public void delete(Context ctx){
-        Integer childId = Integer.parseInt(
-                ctx.pathParam("childId")
-        );        boolean deleted = childService.delete(childId);
+        Integer childId = Integer.parseInt(ctx.pathParam("childId"));
+        checkInDAO.deleteCheckInsByChildId(childId);
+        boolean deleted = childService.delete(childId);
+
 
         if(deleted){
             ctx.status(HttpStatus.OK);

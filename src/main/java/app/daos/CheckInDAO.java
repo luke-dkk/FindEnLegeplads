@@ -286,6 +286,28 @@ private final CheckInMapper checkInMapper;
         }
     }
 
+    public void deleteCheckInsByChildId(Integer childId) {
+        try (EntityManager em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            List<CheckIn> checkIns = em.createQuery(
+                            """
+                            SELECT c
+                            FROM CheckIn c
+                            JOIN c.children child
+                            WHERE child.id = :childId
+                            """,
+                            CheckIn.class
+                    )
+                    .setParameter("childId", childId)
+                    .getResultList();
+
+            for (CheckIn checkIn : checkIns) {
+                em.remove(checkIn);
+            }
+            em.getTransaction().commit();
+        }
+    }
+
 //    public CheckInDTO checkoutFromPlayground(Integer checkInId,Integer authUserId)
 //    {
 //
